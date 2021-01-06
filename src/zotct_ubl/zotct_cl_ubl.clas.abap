@@ -29,6 +29,7 @@ protected section.
     gt_ttyp TYPE TABLE OF ty_data .
   data:
     gt_tabl TYPE TABLE OF ty_data .
+  data GV_XMLSTR type STRINGVAL .
   data GS_UBL type ref to DATA .
   data GT_FLATTAB type ZOTCT_TT0001 .
 
@@ -51,125 +52,91 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
 
   METHOD nest.
+    DATA : gt_flattab_n TYPE zotct_tt0001.
 
-    DATA : gt_split     TYPE TABLE OF string,
-           lc_itab_ext  TYPE REF TO zotct_cl_itab_ext,
-           gt_flattab_r TYPE zotct_tt0001.
+    DATA :lo_mxml    TYPE REF TO cl_xml_document,
+          m_document TYPE REF TO if_ixml_document,
+          l_dom      TYPE REF TO if_ixml_element,
+          l_ele      TYPE REF TO if_ixml_element,
+          l_ele1     TYPE REF TO if_ixml_element,
+          m_doctype  TYPE REF TO if_ixml_document_type,
+          g_ixml     TYPE REF TO if_ixml,
+          l_text     TYPE REF TO if_ixml_text,
+          ls_srctab1 TYPE xstring,
+          l_retcode  TYPE sysubrc.
 
     FIELD-SYMBOLS : <ubl>       TYPE any,
-                    <flattab_r> TYPE zotct_s0001,
                     <flattab_n> TYPE zotct_s0001,
                     <tabl>      LIKE LINE OF me->gt_tabl,
-                    <ttyp>      LIKE LINE OF me->gt_ttyp,
+                    <ttyp>      LIKE LINE OF me->gt_ttyp.
 
-                    <kunduz>    TYPE any,
-
-                    <sincap>    TYPE ANY TABLE,
-
-                    <fare>      TYPE any,
-
-                    <yarasa>    TYPE any,
-
-                    <maymun>    TYPE any,
-
-                    <aslan>     TYPE any,
-
-                    <kanguru>   TYPE ANY TABLE,
-
-                    <kiwi>      TYPE any,
-
-                    <beetle>    TYPE any
-                    .
-
-    ASSIGN gs_ubl->* TO <ubl> .
-
-    gt_flattab_r[] = me->gt_flattab[] .
-
-    CALL METHOD zotct_cl_itab_ext=>reverse
-      CHANGING
-        ct_table = gt_flattab_r.
+    gt_flattab_n[] = gt_flattab[].
 
 *** Map ABAP Name
 
-    LOOP AT gt_flattab_r ASSIGNING <flattab_r>.
-      READ TABLE me->gt_tabl WITH KEY xml_name = <flattab_r>-xmlkey ASSIGNING <tabl>.
-      IF sy-subrc EQ 0.
-        <flattab_r>-abap_name = <tabl>-abap_name .
-        <flattab_r>-r3_name   = <tabl>-r3_name .
-        <flattab_r>-r3_objtyp = <tabl>-r3_objtyp .
-      ELSE.
-        READ TABLE me->gt_ttyp WITH KEY xml_name = <flattab_r>-xmlkey ASSIGNING <ttyp>.
+    LOOP AT gt_flattab_n ASSIGNING <flattab_n>.
+      IF  <flattab_n>-table IS INITIAL.
+        READ TABLE me->gt_tabl WITH KEY xml_name = <flattab_n>-xmlkey ASSIGNING <tabl>.
         IF sy-subrc EQ 0.
-          <flattab_r>-abap_name = <ttyp>-abap_name .
-          <flattab_r>-r3_name   = <ttyp>-r3_name .
-          <flattab_r>-r3_objtyp = <ttyp>-r3_objtyp .
+          <flattab_n>-abap_name = <tabl>-abap_name.
+          <flattab_n>-r3_name   = <tabl>-r3_name.
+          <flattab_n>-r3_objtyp = <tabl>-r3_objtyp.
+        ENDIF.
+      ELSE.
+        READ TABLE me->gt_ttyp WITH KEY xml_name = <flattab_n>-xmlkey ASSIGNING <ttyp>.
+        IF sy-subrc EQ 0.
+          <flattab_n>-abap_name = <ttyp>-abap_name.
+          <flattab_n>-r3_name   = <ttyp>-r3_name.
+          <flattab_n>-r3_objtyp = <ttyp>-r3_objtyp.
         ENDIF.
       ENDIF.
     ENDLOOP.
 
-    DATA : gt_flattab_n TYPE zotct_tt0001 .
+*** Create XML
 
-    CLEAR gt_flattab_n[] .
+    CREATE OBJECT lo_mxml.
+    CLASS cl_ixml DEFINITION LOAD.
+    g_ixml = cl_ixml=>create( ).
+    m_document = g_ixml->create_document( ).
 
-    gt_flattab_n[] = gt_flattab_r[] .
+    CALL METHOD m_document->create_document_type
+      EXPORTING
+        name = 'cXML'
+      RECEIVING
+        rval = m_doctype.
 
-    CALL METHOD zotct_cl_itab_ext=>reverse
-      CHANGING
-        ct_table = gt_flattab_n.
-
-    DATA : gt_tavsan TYPE REF TO data .
+    CALL METHOD m_document->set_document_type
+      EXPORTING
+        document_type = m_doctype.
 
     LOOP AT gt_flattab_n ASSIGNING <flattab_n>.
-
-      IF <flattab_n>-r3_objtyp EQ 'TABL' .
-
-        IF <fare> IS NOT ASSIGNED .
-          IF <kunduz> IS NOT ASSIGNED .
-            ASSIGN COMPONENT <flattab_n>-r3_name OF STRUCTURE <ubl> TO <kunduz> .
-          ELSE.
-            ASSIGN COMPONENT <flattab_n>-r3_name OF STRUCTURE <kunduz> TO <kunduz> .
-          ENDIF.
-
-          IF <flattab_n>-xmlval IS NOT INITIAL .
-            ASSIGN COMPONENT 'BASE' OF STRUCTURE <kunduz> TO <kunduz>.
-            ASSIGN COMPONENT 'BASE' OF STRUCTURE <kunduz> TO <kunduz>.
-            ASSIGN COMPONENT 'CONTENT' OF STRUCTURE <kunduz> TO <kunduz>.
-
-            <kunduz> = <flattab_n>-xmlval .
-          ENDIF.
-        ELSE .
-          LOOP AT <sincap> ASSIGNING <maymun> .
-            ASSIGN COMPONENT <flattab_n>-r3_name OF STRUCTURE <maymun> TO <aslan> .
-
-            ASSIGN COMPONENT 'BASE' OF STRUCTURE <aslan> TO <fare>.
-            ASSIGN COMPONENT 'BASE' OF STRUCTURE <fare> TO <fare>.
-            ASSIGN COMPONENT 'CONTENT' OF STRUCTURE <fare> TO <fare>.
-            <fare> = <flattab_n>-xmlval .
-          ENDLOOP.
-
-          IF <yarasa> IS INITIAL.
-            <yarasa> = <sincap> .
-          ELSE.
-            ASSIGN <yarasa> TO <kanguru> .
-            LOOP AT <kanguru> ASSIGNING <kiwi>.
-              ASSIGN COMPONENT <flattab_n>-r3_name OF STRUCTURE <kiwi> TO <beetle> .
-
-              <beetle> = <aslan> .
-            ENDLOOP.
-            <yarasa> = <kanguru> .
-          ENDIF.
+      IF <flattab_n>-attrib IS NOT INITIAL.
+        CALL METHOD l_dom->set_attribute
+          EXPORTING
+            name  = 'payloadID'
+            value = gv_xmlstr
+*           node  = lo_node
+          RECEIVING
+            rval  = l_retcode.
+      ELSE.
+        l_dom = m_document->create_element( name = <flattab_n>-xmlkey ).
+        IF <flattab_n>-xmlval IS NOT INITIAL.
+          l_dom->set_value( value = <flattab_n>-xmlval ).
         ENDIF.
-      ELSEIF <flattab_n>-r3_objtyp EQ 'TTYP' .
-        IF gt_tavsan IS INITIAL.
-          CREATE DATA gt_tavsan TYPE (<flattab_n>-abap_name) .
-        ENDIF.
-
-        ASSIGN gt_tavsan->* TO <sincap> .
-        INSERT INITIAL LINE INTO TABLE <sincap> ASSIGNING <fare>.
-
-        ASSIGN COMPONENT <flattab_n>-r3_name OF STRUCTURE <kunduz> TO <yarasa> .
       ENDIF.
+
+      l_retcode = m_document->append_child( l_dom ).
     ENDLOOP.
+
+    CALL METHOD lo_mxml->create_with_dom
+      EXPORTING
+        document = m_document.
+
+    DATA lv_stream TYPE string.
+
+    CALL METHOD lo_mxml->render_2_string
+      IMPORTING
+        stream = lv_stream.
   ENDMETHOD.
 
 
@@ -190,49 +157,51 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
       CLEAR : gt_split1[],
             gt_split2[],
             lv_splits,
-            lv_cnt ,
-            lv_reptxt .
+            lv_cnt,
+            lv_reptxt.
 
-      SPLIT <ubltab>-xmlkey AT '->' INTO TABLE gt_split1 .
+      SPLIT <ubltab>-xmlkey AT '->' INTO TABLE gt_split1.
 
-      DESCRIBE TABLE gt_split1 LINES lv_splits .
+      DESCRIBE TABLE gt_split1 LINES lv_splits.
 
-      CLEAR me->gt_flattab[] .
+      CLEAR me->gt_flattab[].
 
       LOOP AT gt_split1 ASSIGNING <split>.
-        lv_cnt = lv_cnt + 1 .
-        APPEND INITIAL LINE TO me->gt_flattab ASSIGNING <flattab> .
+        lv_cnt = lv_cnt + 1.
+        APPEND INITIAL LINE TO me->gt_flattab ASSIGNING <flattab>.
 
         IF <split> CA '[]'.
-          SPLIT <split> AT '[' INTO TABLE gt_split2 .
+          SPLIT <split> AT '[' INTO TABLE gt_split2.
 
-          READ TABLE gt_split2 ASSIGNING <split2> INDEX 2 .
+          READ TABLE gt_split2 ASSIGNING <split2> INDEX 2.
           IF sy-subrc EQ 0.
-            REPLACE ALL OCCURRENCES OF ']' IN <split2> WITH space .
+            REPLACE ALL OCCURRENCES OF ']' IN <split2> WITH space.
 
-            <flattab>-index = <split2> .
+            <flattab>-index = <split2>.
 
-            CONCATENATE '[' <split2> ']' INTO lv_reptxt .
+            CONCATENATE '[' <split2> ']' INTO lv_reptxt.
 
-            REPLACE ALL OCCURRENCES OF lv_reptxt IN <split> WITH space .
+            REPLACE ALL OCCURRENCES OF lv_reptxt IN <split> WITH space.
 
           ENDIF.
 
+          <flattab>-table = abap_true.
+
         ELSE.
-          <flattab>-index = 0 .
+          <flattab>-index = 0.
         ENDIF.
 
-        <flattab>-xmlkey = <split> .
+        <flattab>-xmlkey = <split>.
 
-        <flattab>-attrib = <ubltab>-attrib .
+        <flattab>-attrib = <ubltab>-attrib.
 
-        IF lv_cnt EQ lv_splits .
-          <flattab>-xmlval = <ubltab>-xmlval .
+        IF lv_cnt EQ lv_splits.
+          <flattab>-xmlval = <ubltab>-xmlval.
         ENDIF.
 
       ENDLOOP.
 
-      me->nest( ) .
+      me->nest( ).
     ENDLOOP.
 
 

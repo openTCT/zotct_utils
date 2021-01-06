@@ -24,6 +24,12 @@
      <LANGU>E</LANGU>
      <DESCRIPT>UBL Proxy Configuration</DESCRIPT>
     </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZOTCT_CL_UBL</CLSNAME>
+     <CMPNAME>GV_XMLSTR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>String</DESCRIPT>
+    </SEOCOMPOTX>
    </DESCRIPTIONS>
   </asx:values>
  </asx:abap>
