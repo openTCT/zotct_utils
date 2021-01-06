@@ -72,7 +72,7 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
             type     = type
           IMPORTING
             tin_list = tin_list
-            tin      = tin .
+            tin      = tin.
       WHEN OTHERS.
 
     ENDCASE.
@@ -92,8 +92,8 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
            lv_mod1         TYPE p,
            lv_mod2         TYPE p,
 
-           lv_dec10           ,
-           lv_dec11           .
+           lv_dec10,
+           lv_dec11.
 
     DO count TIMES.
 
@@ -112,9 +112,9 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
 *         Implement suitable error handling here
         ELSE.
           CLEAR ls_tin.
-          ls_tin-tin = lv_ran_int .
-          APPEND ls_tin TO tin_list .
-          tin = lv_ran_int .
+          ls_tin-tin = lv_ran_int.
+          APPEND ls_tin TO tin_list.
+          tin = lv_ran_int.
         ENDIF.
       ELSEIF type EQ 'TCKN'.
 
@@ -131,31 +131,31 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
         IF sy-subrc <> 0.
 *       Implement suitable error handling here
         ELSE.
-          CLEAR lv_tckn_root .
+          CLEAR lv_tckn_root.
 
           lv_tckn_root = lv_ran_int.
 
           lv_even_sum = lv_tckn_root+1(1) +
                         lv_tckn_root+3(1) +
                         lv_tckn_root+5(1) +
-                        lv_tckn_root+7(1) .
+                        lv_tckn_root+7(1).
 
           lv_odd_sum  = lv_tckn_root(1) +
                         lv_tckn_root+2(1) +
                         lv_tckn_root+4(1) +
                         lv_tckn_root+6(1) +
-                        lv_tckn_root+8(1) .
+                        lv_tckn_root+8(1).
 
-          lv_mod1 = ( lv_odd_sum * 7 - lv_even_sum ) MOD 10 .
-          lv_mod2 = ( lv_odd_sum + lv_even_sum + lv_mod1 ) MOD 10 .
+          lv_mod1 = ( lv_odd_sum * 7 - lv_even_sum ) MOD 10.
+          lv_mod2 = ( lv_odd_sum + lv_even_sum + lv_mod1 ) MOD 10.
 
-          lv_dec10 = lv_mod1 .
-          lv_dec11 = lv_mod2 .
+          lv_dec10 = lv_mod1.
+          lv_dec11 = lv_mod2.
 
-          CLEAR ls_tin .
-          CONCATENATE lv_tckn_root lv_dec10 lv_dec11 INTO ls_tin-tin .
-          APPEND ls_tin TO tin_list .
-          tin = ls_tin-tin .
+          CLEAR ls_tin.
+          CONCATENATE lv_tckn_root lv_dec10 lv_dec11 INTO ls_tin-tin.
+          APPEND ls_tin TO tin_list.
+          tin = ls_tin-tin.
         ENDIF.
       ENDIF.
     ENDDO.
@@ -173,8 +173,7 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
             type        = type
           IMPORTING
             result_list = result_list
-            valid       = valid
-            .
+            valid       = valid.
 
       WHEN OTHERS.
 
@@ -197,25 +196,25 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
            lv_mod1         TYPE p,
            lv_mod2         TYPE p,
 
-           lv_dec10           ,
-           lv_dec11           ,
+           lv_dec10,
+           lv_dec11,
            lv_strlen       TYPE p.
 
 
 
-    LOOP AT tin_list INTO ls_list .
-      CLEAR ls_result_list .
+    LOOP AT tin_list INTO ls_list.
+      CLEAR ls_result_list.
 
       CLEAR lv_strlen.
 
-      lv_strlen = strlen( ls_list-tin ) .
+      lv_strlen = strlen( ls_list-tin ).
 
       IF ls_list-tin IS INITIAL OR
          lv_strlen LT 10 OR
-         lv_strlen GT 11 .
-        ls_result_list-tin = ls_list-tin .
+         lv_strlen GT 11.
+        ls_result_list-tin = ls_list-tin.
         ls_result_list-valid = abap_false.
-        APPEND ls_result_list TO result_list .
+        APPEND ls_result_list TO result_list.
 
         CONTINUE.
       ENDIF.
@@ -228,37 +227,37 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
         IF ls_list-tin(1) EQ '0'.
           ls_result_list-tin = ls_list-tin.
           ls_result_list-valid = abap_false.
-          APPEND ls_result_list TO result_list .
+          APPEND ls_result_list TO result_list.
 
           CONTINUE.
         ENDIF.
 
-        CLEAR : lv_tckn_root  ,
-                lv_even_sum   ,
-                lv_odd_sum    ,
-                lv_mod1       ,
-                lv_mod2       ,
-                lv_dec10      ,
-                lv_dec11      .
+        CLEAR : lv_tckn_root,
+                lv_even_sum,
+                lv_odd_sum,
+                lv_mod1,
+                lv_mod2,
+                lv_dec10,
+                lv_dec11.
 
-        lv_tckn = ls_list-tin .
+        lv_tckn = ls_list-tin.
 
         lv_even_sum = lv_tckn+1(1) +
                       lv_tckn+3(1) +
                       lv_tckn+5(1) +
-                      lv_tckn+7(1) .
+                      lv_tckn+7(1).
 
         lv_odd_sum  = lv_tckn(1) +
                       lv_tckn+2(1) +
                       lv_tckn+4(1) +
                       lv_tckn+6(1) +
-                      lv_tckn+8(1) .
+                      lv_tckn+8(1).
 
-        lv_mod1 = ( lv_odd_sum * 7 - lv_even_sum ) MOD 10 .
-        lv_mod2 = ( lv_odd_sum + lv_even_sum + lv_mod1 ) MOD 10 .
+        lv_mod1 = ( lv_odd_sum * 7 - lv_even_sum ) MOD 10.
+        lv_mod2 = ( lv_odd_sum + lv_even_sum + lv_mod1 ) MOD 10.
 
         IF lv_tckn+9(1) EQ lv_mod1 AND
-           lv_tckn+10(1) EQ lv_mod2 .
+           lv_tckn+10(1) EQ lv_mod2.
           ls_result_list-tin = ls_list-tin.
           ls_result_list-valid = abap_true.
         ELSE.
@@ -270,10 +269,10 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
         ls_result_list-valid = abap_false.
       ENDIF.
 
-      APPEND ls_result_list TO result_list .
+      APPEND ls_result_list TO result_list.
     ENDLOOP.
 
-    valid = abap_true .
+    valid = abap_true.
 
     LOOP AT result_list INTO ls_result_list WHERE valid IS INITIAL.
       valid = abap_false.

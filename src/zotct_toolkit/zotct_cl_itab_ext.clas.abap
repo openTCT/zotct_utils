@@ -40,7 +40,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
                     <f_target_struct2> TYPE any,
                     <f_field>          TYPE any.
 
-    CREATE DATA : l_ref LIKE ct_table .
+    CREATE DATA : l_ref LIKE ct_table.
 
     ASSIGN l_ref->* TO <f_target_tab>.
 
@@ -53,7 +53,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
     l_comp-name = 'SEQNR'.
 *    l_comp-type = cl_abap_elemdescr=>get_c( p_length = '10' ).
-    l_comp-type = cl_abap_elemdescr=>get_int8( ) .
+    l_comp-type = cl_abap_elemdescr=>get_int8( ).
     APPEND l_comp TO l_comp_tab. CLEAR l_comp.
 
     l_structure2 = cl_abap_structdescr=>create( l_comp_tab ).
@@ -62,41 +62,41 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     CREATE DATA l_new_table    TYPE HANDLE lo_new_tab.
     ASSIGN l_new_table->* TO <f_target_tab>.
 
-    CREATE DATA l_new_struct2 TYPE HANDLE l_structure2 .
-    ASSIGN l_new_struct2->* TO <f_target_struct2> .
+    CREATE DATA l_new_struct2 TYPE HANDLE l_structure2.
+    ASSIGN l_new_struct2->* TO <f_target_struct2>.
 
-    CREATE DATA l_new_struct TYPE HANDLE l_structure .
-    ASSIGN l_new_struct->* TO <f_target_struct> .
+    CREATE DATA l_new_struct TYPE HANDLE l_structure.
+    ASSIGN l_new_struct->* TO <f_target_struct>.
 
 
 ** Fill in the SEQNR field with random integers
     DATA : lv_lines   TYPE qfranint,
            lv_ran_int TYPE qfranint.
 
-    CLEAR lv_lines .
+    CLEAR lv_lines.
 
-    DESCRIBE TABLE ct_table LINES lv_lines .
+    DESCRIBE TABLE ct_table LINES lv_lines.
 
     LOOP AT ct_table ASSIGNING <f_target_struct>.
       ASSIGN COMPONENT 'SEQNR' OF STRUCTURE <f_target_struct2> TO <f_field>.
 
-      MOVE-CORRESPONDING <f_target_struct> TO <f_target_struct2> .
+      MOVE-CORRESPONDING <f_target_struct> TO <f_target_struct2>.
 
-      <f_field> = sy-tabix .
+      <f_field> = sy-tabix.
 
-      INSERT <f_target_struct2> INTO TABLE <f_target_tab> .
+      INSERT <f_target_struct2> INTO TABLE <f_target_tab>.
 
     ENDLOOP.
 
 *** Sort the internal table and delete&modify the original one
 
-    SORT <f_target_tab> BY ('SEQNR') DESCENDING .
+    SORT <f_target_tab> BY ('SEQNR') DESCENDING.
 
-    CLEAR ct_table[] .
+    CLEAR ct_table[].
 
     LOOP AT <f_target_tab> ASSIGNING <f_target_struct2>.
-      APPEND INITIAL LINE TO ct_table ASSIGNING <f_target_struct> .
-      MOVE-CORRESPONDING <f_target_struct2> TO <f_target_struct> .
+      APPEND INITIAL LINE TO ct_table ASSIGNING <f_target_struct>.
+      MOVE-CORRESPONDING <f_target_struct2> TO <f_target_struct>.
     ENDLOOP.
   ENDMETHOD.
 
@@ -122,7 +122,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
                     <f_target_struct2> TYPE any,
                     <f_field>          TYPE any.
 
-    CREATE DATA : l_ref LIKE ct_table .
+    CREATE DATA : l_ref LIKE ct_table.
 
     ASSIGN l_ref->* TO <f_target_tab>.
 
@@ -134,8 +134,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     l_comp_tab = l_structure->get_components( ).
 
     l_comp-name = 'SEQNR'.
-*    l_comp-type = cl_abap_elemdescr=>get_c( p_length = '10' ).
-    l_comp-type = cl_abap_elemdescr=>get_int8( ) .
+    l_comp-type = cl_abap_elemdescr=>get_int8( ).
     APPEND l_comp TO l_comp_tab. CLEAR l_comp.
 
     l_structure2 = cl_abap_structdescr=>create( l_comp_tab ).
@@ -144,25 +143,25 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     CREATE DATA l_new_table    TYPE HANDLE lo_new_tab.
     ASSIGN l_new_table->* TO <f_target_tab>.
 
-    CREATE DATA l_new_struct2 TYPE HANDLE l_structure2 .
-    ASSIGN l_new_struct2->* TO <f_target_struct2> .
+    CREATE DATA l_new_struct2 TYPE HANDLE l_structure2.
+    ASSIGN l_new_struct2->* TO <f_target_struct2>.
 
-    CREATE DATA l_new_struct TYPE HANDLE l_structure .
-    ASSIGN l_new_struct->* TO <f_target_struct> .
+    CREATE DATA l_new_struct TYPE HANDLE l_structure.
+    ASSIGN l_new_struct->* TO <f_target_struct>.
 
 
 ** Fill in the SEQNR field with random integers
     DATA : lv_lines   TYPE qfranint,
            lv_ran_int TYPE qfranint.
 
-    CLEAR lv_lines .
+    CLEAR lv_lines.
 
-    DESCRIBE TABLE ct_table LINES lv_lines .
+    DESCRIBE TABLE ct_table LINES lv_lines.
 
     LOOP AT ct_table ASSIGNING <f_target_struct>.
       ASSIGN COMPONENT 'SEQNR' OF STRUCTURE <f_target_struct2> TO <f_field>.
 
-      MOVE-CORRESPONDING <f_target_struct> TO <f_target_struct2> .
+      MOVE-CORRESPONDING <f_target_struct> TO <f_target_struct2>.
 
       CALL FUNCTION 'QF05_RANDOM_INTEGER'
         EXPORTING
@@ -176,22 +175,22 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
       IF sy-subrc <> 0.
 * Implement suitable error handling here
       ELSE.
-        <f_field> = lv_ran_int .
+        <f_field> = lv_ran_int.
       ENDIF.
 
-      INSERT <f_target_struct2> INTO TABLE <f_target_tab> .
+      INSERT <f_target_struct2> INTO TABLE <f_target_tab>.
 
     ENDLOOP.
 
 *** Sort the internal table and delete&modify the original one
 
-    SORT <f_target_tab> BY ('SEQNR') ASCENDING .
+    SORT <f_target_tab> BY ('SEQNR') ASCENDING.
 
-    CLEAR ct_table[] .
+    CLEAR ct_table[].
 
     LOOP AT <f_target_tab> ASSIGNING <f_target_struct2>.
-      APPEND INITIAL LINE TO ct_table ASSIGNING <f_target_struct> .
-      MOVE-CORRESPONDING <f_target_struct2> TO <f_target_struct> .
+      APPEND INITIAL LINE TO ct_table ASSIGNING <f_target_struct>.
+      MOVE-CORRESPONDING <f_target_struct2> TO <f_target_struct>.
     ENDLOOP.
 
   ENDMETHOD.

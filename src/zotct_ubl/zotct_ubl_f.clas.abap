@@ -27,21 +27,21 @@ CLASS ZOTCT_UBL_F IMPLEMENTATION.
 
   METHOD constructor.
 
-    DATA : lo_ef TYPE REF TO zotcttr_cl_ef ,
-           lo_ea TYPE REF TO zotcttr_cl_ea ,
-           lo_ei TYPE REF TO zotcttr_cl_ei .
+    DATA : lo_ef TYPE REF TO zotcttr_cl_ef,
+           lo_ea TYPE REF TO zotcttr_cl_ea,
+           lo_ei TYPE REF TO zotcttr_cl_ei.
 
     IF locale EQ 'TR'.
       CASE product.
         WHEN 'EF'.
-          CREATE OBJECT lo_ef .
-          mo_ubl ?= lo_ef .
+          CREATE OBJECT lo_ef.
+          mo_ubl ?= lo_ef.
         WHEN 'EA'.
-          CREATE OBJECT lo_ea .
-          mo_ubl ?= lo_ea .
+          CREATE OBJECT lo_ea.
+          mo_ubl ?= lo_ea.
         WHEN 'EI'.
-          CREATE OBJECT lo_ei .
-          mo_ubl ?= lo_ei .
+          CREATE OBJECT lo_ei.
+          mo_ubl ?= lo_ei.
         WHEN OTHERS.
       ENDCASE.
     ENDIF.
@@ -50,7 +50,6 @@ CLASS ZOTCT_UBL_F IMPLEMENTATION.
 
 
   METHOD get_ubl.
-
-    mo_ubl = me->mo_ubl .
+    mo_ubl = me->mo_ubl.
   ENDMETHOD.
 ENDCLASS.
