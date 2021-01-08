@@ -32,6 +32,9 @@ protected section.
   data GV_XMLSTR type STRINGVAL .
   data GS_UBL type ref to DATA .
   data GT_FLATTAB type ZOTCT_TT0001 .
+  data GC_DOCUMENT type ref to IF_IXML_DOCUMENT .
+  data GC_ROOT type ref to IF_IXML_ELEMENT .
+  data GC_IXML type ref to IF_IXML .
 
   methods FLATTEN .
   methods NEST .
@@ -52,28 +55,30 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
 
   METHOD nest.
-    DATA : gt_flattab_n TYPE zotct_tt0001.
+    TYPES: BEGIN OF ty_flattab_n,
+             node TYPE REF TO if_ixml_node.
+             INCLUDE TYPE zotct_s0001.
+           TYPES END OF ty_flattab_n.
 
-    DATA :lo_mxml    TYPE REF TO cl_xml_document,
-          m_document TYPE REF TO if_ixml_document,
-          l_dom      TYPE REF TO if_ixml_element,
-          l_ele      TYPE REF TO if_ixml_element,
-          l_ele1     TYPE REF TO if_ixml_element,
-          m_doctype  TYPE REF TO if_ixml_document_type,
-          g_ixml     TYPE REF TO if_ixml,
-          l_text     TYPE REF TO if_ixml_text,
-          ls_srctab1 TYPE xstring,
-          l_retcode  TYPE sysubrc.
+    DATA: gt_flattab_n TYPE TABLE OF ty_flattab_n,
+          lv_stream    TYPE string,
+          lv_name      TYPE string,
+          iterator     TYPE REF TO if_ixml_node_iterator,
+          lc_node      TYPE REF TO if_ixml_node.
+
+    DATA: lc_prevnode TYPE REF TO if_ixml_node.
 
     FIELD-SYMBOLS : <ubl>       TYPE any,
-                    <flattab_n> TYPE zotct_s0001,
+                    <flattab_n> TYPE ty_flattab_n,
+                    <flattab>   TYPE zotct_s0001,
                     <tabl>      LIKE LINE OF me->gt_tabl,
                     <ttyp>      LIKE LINE OF me->gt_ttyp.
 
-    gt_flattab_n[] = gt_flattab[].
-
+    LOOP AT gt_flattab ASSIGNING <flattab>.
+      APPEND INITIAL LINE TO gt_flattab_n ASSIGNING <flattab_n>.
+      MOVE-CORRESPONDING <flattab> TO <flattab_n>.
+    ENDLOOP.
 *** Map ABAP Name
-
     LOOP AT gt_flattab_n ASSIGNING <flattab_n>.
       IF  <flattab_n>-table IS INITIAL.
         READ TABLE me->gt_tabl WITH KEY xml_name = <flattab_n>-xmlkey ASSIGNING <tabl>.
@@ -91,79 +96,92 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
         ENDIF.
       ENDIF.
     ENDLOOP.
-
 *** Create XML
+    IF me->gc_ixml IS INITIAL.
+      me->gc_ixml     = cl_ixml=>create( ). " if_ixml
+      me->gc_document = me->gc_ixml->create_document( ). "IF_IXML_DOCUMENT
 
-    CREATE OBJECT lo_mxml.
-    CLASS cl_ixml DEFINITION LOAD.
-    g_ixml = cl_ixml=>create( ).
-    m_document = g_ixml->create_document( ).
+      me->gc_root = me->gc_document->create_element_ns( name = 'abap'  "IF_IXML_ELEMENT
+                                                "prefix = 'asx'
+                                                ).
 
-    CALL METHOD m_document->create_document_type
-      EXPORTING
-        name = 'cXML'
-      RECEIVING
-        rval = m_doctype.
+      me->gc_root->set_attribute_ns( name =  'version'
+                              value = '1.0' ).
+      me->gc_document->append_child( me->gc_root ).
 
-    CALL METHOD m_document->set_document_type
-      EXPORTING
-        document_type = m_doctype.
+      CLEAR: lc_prevnode.
+      LOOP AT gt_flattab_n ASSIGNING <flattab_n>.
 
-    LOOP AT gt_flattab_n ASSIGNING <flattab_n>.
-      IF <flattab_n>-attrib IS NOT INITIAL.
-        CALL METHOD l_dom->set_attribute
-          EXPORTING
-            name  = 'payloadID'
-            value = gv_xmlstr
-*           node  = lo_node
-          RECEIVING
-            rval  = l_retcode.
-      ELSE.
-        l_dom = m_document->create_element( name = <flattab_n>-xmlkey ).
+        <flattab_n>-node = me->gc_document->create_element_ns( name = <flattab_n>-xmlkey ).
         IF <flattab_n>-xmlval IS NOT INITIAL.
-          l_dom->set_value( value = <flattab_n>-xmlval ).
+          <flattab_n>-node->append_child( me->gc_document->create_text( <flattab_n>-xmlval ) ).
         ENDIF.
-      ENDIF.
 
-      l_retcode = m_document->append_child( l_dom ).
-    ENDLOOP.
+        IF lc_prevnode IS INITIAL.
+          me->gc_root->append_child( <flattab_n>-node ).
+        ELSE.
+          lc_prevnode->append_child( <flattab_n>-node ).
+        ENDIF.
 
-    CALL METHOD lo_mxml->create_with_dom
-      EXPORTING
-        document = m_document.
+        lc_prevnode = <flattab_n>-node.
+      ENDLOOP.
+    ELSE.
+      iterator = me->gc_document->create_iterator( ).
 
-    DATA lv_stream TYPE string.
+      DO 2 TIMES.
+        <flattab_n>-node = iterator->get_next( ).
+      ENDDO.
 
-    CALL METHOD lo_mxml->render_2_string
-      IMPORTING
-        stream = lv_stream.
+      LOOP AT gt_flattab_n ASSIGNING <flattab_n>.
+        CLEAR: lv_name.
+        <flattab_n>-node = iterator->get_next( ).
+
+        lv_name = <flattab_n>-node->get_name( ).
+
+        IF lv_name EQ <flattab_n>-xmlkey.
+          lc_prevnode = <flattab_n>-node.
+          CONTINUE.
+        ELSE.
+          <flattab_n>-node = me->gc_document->create_element_ns( name = <flattab_n>-xmlkey ).
+
+          IF <flattab_n>-xmlval IS NOT INITIAL.
+            <flattab_n>-node->append_child( me->gc_document->create_text( <flattab_n>-xmlval ) ).
+          ENDIF.
+
+          lc_prevnode->append_child( <flattab_n>-node ).
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    me->gc_ixml->create_renderer( document = me->gc_document
+                                  ostream  = me->gc_ixml->create_stream_factory(
+                                  )->create_ostream_cstring( string = gv_xmlstr
+                                  ) )->render( ).
   ENDMETHOD.
 
 
   METHOD set_node.
 
-    DATA : gt_split1 TYPE TABLE OF string,
-           gt_split2 TYPE TABLE OF string,
-           lv_splits TYPE p,
-           lv_cnt    TYPE p,
-           lv_reptxt TYPE string.
+    DATA: gt_split1 TYPE TABLE OF string,
+          gt_split2 TYPE TABLE OF string,
+          lv_splits TYPE p,
+          lv_cnt    TYPE p,
+          lv_reptxt TYPE string.
 
-    FIELD-SYMBOLS : <split>   TYPE string,
-                    <split2>  TYPE string,
-                    <flattab> LIKE LINE OF me->gt_flattab,
-                    <ubltab>  TYPE zotct_s0002.
+    FIELD-SYMBOLS: <split>   TYPE string,
+                   <split2>  TYPE string,
+                   <flattab> LIKE LINE OF me->gt_flattab,
+                   <ubltab>  TYPE zotct_s0002.
 
     LOOP AT ubltab ASSIGNING <ubltab>.
-      CLEAR : gt_split1[],
+      CLEAR: gt_split1[],
             gt_split2[],
             lv_splits,
             lv_cnt,
             lv_reptxt.
 
       SPLIT <ubltab>-xmlkey AT '->' INTO TABLE gt_split1.
-
       DESCRIBE TABLE gt_split1 LINES lv_splits.
-
       CLEAR me->gt_flattab[].
 
       LOOP AT gt_split1 ASSIGNING <split>.
@@ -182,17 +200,13 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
             CONCATENATE '[' <split2> ']' INTO lv_reptxt.
 
             REPLACE ALL OCCURRENCES OF lv_reptxt IN <split> WITH space.
-
           ENDIF.
-
           <flattab>-table = abap_true.
-
         ELSE.
           <flattab>-index = 0.
         ENDIF.
 
         <flattab>-xmlkey = <split>.
-
         <flattab>-attrib = <ubltab>-attrib.
 
         IF lv_cnt EQ lv_splits.
@@ -203,7 +217,5 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
       me->nest( ).
     ENDLOOP.
-
-
   ENDMETHOD.
 ENDCLASS.
