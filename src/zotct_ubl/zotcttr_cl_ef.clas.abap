@@ -20,9 +20,9 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
   METHOD constructor.
 
-    FIELD-SYMBOLS : <t0001> LIKE LINE OF me->gt_t0001.
+    FIELD-SYMBOLS: <t0001> LIKE LINE OF me->gt_t0001.
 
-    DATA : lv_prefixp TYPE tabname.
+    DATA: lv_prefixp TYPE tabname.
 
     super->constructor( ).
 
@@ -85,7 +85,6 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
              <sproxdat>-ifr_name EQ 'TimeType' OR
              <sproxdat>-ifr_name EQ 'TimeType.Content'.
 
-
             READ TABLE me->gt_tadir_v ASSIGNING <tadir_v> WITH KEY obj_name_m = <sproxdat>-obj_name_r.
             IF sy-subrc EQ 0.
               <data>-xml_name = <tadir_v>-ifr_name.
@@ -96,8 +95,6 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
           <data>-r3_name = <sproxdat>-obj_name1.
           <data>-r3_objtyp = <sproxdat>-object_r.
-
-
 
         WHEN 'TABL'.
 
@@ -138,9 +135,9 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
       ENDCASE.
     ENDLOOP.
 
-    DATA : lv_tabname TYPE tabname.
+    DATA: lv_tabname TYPE tabname.
 
-    CLEAR : lv_tabname.
+    CLEAR: lv_tabname.
 
     SELECT SINGLE tabname INTO lv_tabname
     FROM dd03vv

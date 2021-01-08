@@ -20,27 +20,27 @@ ENDCLASS.
 CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
 
-  METHOD REVERSE.
+  METHOD reverse.
 *** INSERT field to the internal table
 
-    data : l_datadescr   type ref to cl_abap_datadescr,
-           l_comp_tab    type cl_abap_structdescr=>component_table,
-           l_comp        type cl_abap_structdescr=>component,
-           lo_new_tab    type ref to cl_abap_tabledescr,
-           l_structure   type ref to cl_abap_structdescr,
-           l_structure2  type ref to cl_abap_structdescr,
-           l_new_table   type ref to data,
-           l_new_struct  type ref to data,
-           l_new_struct2 type ref to data,
+    DATA: l_datadescr   TYPE REF TO cl_abap_datadescr,
+          l_comp_tab    TYPE cl_abap_structdescr=>component_table,
+          l_comp        TYPE cl_abap_structdescr=>component,
+          lo_new_tab    TYPE REF TO cl_abap_tabledescr,
+          l_structure   TYPE REF TO cl_abap_structdescr,
+          l_structure2  TYPE REF TO cl_abap_structdescr,
+          l_new_table   TYPE REF TO data,
+          l_new_struct  TYPE REF TO data,
+          l_new_struct2 TYPE REF TO data,
 
-           l_ref         type ref to data.
+          l_ref         TYPE REF TO data.
 
-    FIELD-SYMBOLS : <f_target_tab>     TYPE ANY TABLE,
-                    <f_target_struct>  TYPE any,
-                    <f_target_struct2> TYPE any,
-                    <f_field>          TYPE any.
+    FIELD-SYMBOLS: <f_target_tab>     TYPE ANY TABLE,
+                   <f_target_struct>  TYPE any,
+                   <f_target_struct2> TYPE any,
+                   <f_field>          TYPE any.
 
-    CREATE DATA : l_ref LIKE ct_table.
+    CREATE DATA: l_ref LIKE ct_table.
 
     ASSIGN l_ref->* TO <f_target_tab>.
 
@@ -70,8 +70,8 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
 
 ** Fill in the SEQNR field with random integers
-    DATA : lv_lines   TYPE qfranint,
-           lv_ran_int TYPE qfranint.
+    DATA: lv_lines   TYPE qfranint,
+          lv_ran_int TYPE qfranint.
 
     CLEAR lv_lines.
 
@@ -101,33 +101,33 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD SHUFFLE.
+  METHOD shuffle.
 
 *** Insert field to the internal table
 
-    DATA : l_datadescr   TYPE REF TO cl_abap_datadescr,
-           l_comp_tab    TYPE cl_abap_structdescr=>component_table,
-           l_comp        TYPE cl_abap_structdescr=>component,
-           lo_new_tab    TYPE REF TO cl_abap_tabledescr,
-           l_structure   TYPE REF TO cl_abap_structdescr,
-           l_structure2  TYPE REF TO cl_abap_structdescr,
-           l_new_table   TYPE REF TO data,
-           l_new_struct  TYPE REF TO data,
-           l_new_struct2 TYPE REF TO data,
+    DATA: l_datadescr   TYPE REF TO cl_abap_datadescr,
+          l_comp_tab    TYPE cl_abap_structdescr=>component_table,
+          l_comp        TYPE cl_abap_structdescr=>component,
+          lo_new_tab    TYPE REF TO cl_abap_tabledescr,
+          l_structure   TYPE REF TO cl_abap_structdescr,
+          l_structure2  TYPE REF TO cl_abap_structdescr,
+          l_new_table   TYPE REF TO data,
+          l_new_struct  TYPE REF TO data,
+          l_new_struct2 TYPE REF TO data,
 
-           l_ref         TYPE REF TO data.
+          l_ref         TYPE REF TO data.
 
     FIELD-SYMBOLS : <f_target_tab>     TYPE ANY TABLE,
                     <f_target_struct>  TYPE any,
                     <f_target_struct2> TYPE any,
                     <f_field>          TYPE any.
 
-    CREATE DATA : l_ref LIKE ct_table.
+    CREATE DATA: l_ref LIKE ct_table.
 
     ASSIGN l_ref->* TO <f_target_tab>.
 
 
-    lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
+    lo_new_tab ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
     l_datadescr = lo_new_tab->get_table_line_type( ).
 
     l_structure ?= l_datadescr.
@@ -151,8 +151,8 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
 
 ** Fill in the SEQNR field with random integers
-    DATA : lv_lines   TYPE qfranint,
-           lv_ran_int TYPE qfranint.
+    DATA: lv_lines   TYPE qfranint,
+          lv_ran_int TYPE qfranint.
 
     CLEAR lv_lines.
 

@@ -27,9 +27,9 @@ CLASS ZOTCT_UBL_F IMPLEMENTATION.
 
   METHOD constructor.
 
-    DATA : lo_ef TYPE REF TO zotcttr_cl_ef,
-           lo_ea TYPE REF TO zotcttr_cl_ea,
-           lo_ei TYPE REF TO zotcttr_cl_ei.
+    DATA: lo_ef TYPE REF TO zotcttr_cl_ef,
+          lo_ea TYPE REF TO zotcttr_cl_ea,
+          lo_ei TYPE REF TO zotcttr_cl_ei.
 
     IF locale EQ 'TR'.
       CASE product.
