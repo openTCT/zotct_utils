@@ -8,6 +8,9 @@ public section.
     importing
       !UBLTAB type ZOTCT_TT0002 .
   methods GET_NODE .
+  methods GET_XMLSTR
+    returning
+      value(XMLSTR) type STRINGVAL .
 protected section.
 
   types:
@@ -54,6 +57,11 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
   endmethod.
 
 
+  method GET_XMLSTR.
+      xmlstr = gv_xmlstr.
+  endmethod.
+
+
   METHOD nest.
     TYPES: BEGIN OF ty_flattab_n,
              node TYPE REF TO if_ixml_node.
@@ -97,6 +105,7 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
 *** Create XML
+
     IF me->gc_ixml IS INITIAL.
       me->gc_ixml     = cl_ixml=>create( ). " if_ixml
       me->gc_document = me->gc_ixml->create_document( ). "IF_IXML_DOCUMENT
@@ -149,6 +158,7 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
           ENDIF.
 
           lc_prevnode->append_child( <flattab_n>-node ).
+          lc_prevnode = <flattab_n>-node.
         ENDIF.
       ENDLOOP.
     ENDIF.
@@ -178,7 +188,8 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
             gt_split2[],
             lv_splits,
             lv_cnt,
-            lv_reptxt.
+            lv_reptxt,
+            gv_xmlstr.
 
       SPLIT <ubltab>-xmlkey AT '->' INTO TABLE gt_split1.
       DESCRIBE TABLE gt_split1 LINES lv_splits.
