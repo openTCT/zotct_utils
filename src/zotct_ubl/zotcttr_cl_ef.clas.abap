@@ -10,6 +10,21 @@ public section.
     exceptions
       CX_SCSM_CUSTOMIZING .
 protected section.
+
+  data GC_XMLNS type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2' ##NO_TEXT.
+  data GC_CAC type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2' ##NO_TEXT.
+  data GC_XADES type STRING value 'http://uri.etsi.org/01903/v1.3.2#' ##NO_TEXT.
+  data GC_UDT type STRING value 'urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2' ##NO_TEXT.
+  data GC_CBC type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2' ##NO_TEXT.
+  data GC_CCTS type STRING value 'urn:un:unece:uncefact:documentation:2' ##NO_TEXT.
+  data GC_UBLTR type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:TurkishCustomizationExtensionComponents' ##NO_TEXT.
+  data GC_QDT type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2' ##NO_TEXT.
+  data GC_EXT type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2' ##NO_TEXT.
+  data GC_DS type STRING value 'http://www.w3.org/2000/09/xmldsig#' ##NO_TEXT.
+  data GC_XSI type STRING value 'http://www.w3.org/2001/XMLSchema-instance' ##NO_TEXT.
+  data GC_SCHEMALOCATION type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 ../xsd/maindoc/UBL-Invoice-2.1.xsd' ##NO_TEXT.
+
+  methods SET_NAMESPACES .
 private section.
 ENDCLASS.
 
@@ -145,5 +160,11 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
       AND fieldname EQ 'STANDARD_BUSINESS_DOCUMENT'.
 
     CREATE DATA gs_ubl TYPE (lv_tabname).
+  ENDMETHOD.
+
+
+  METHOD set_namespaces.
+
+
   ENDMETHOD.
 ENDCLASS.
