@@ -39,9 +39,11 @@ protected section.
   data GCL_ROOT type ref to IF_IXML_ELEMENT .
   data GCL_IXML type ref to IF_IXML .
 
+  methods SET_NAMESPACES .
+private section.
+
   methods FLATTEN .
   methods NEST .
-private section.
 ENDCLASS.
 
 
@@ -57,9 +59,10 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
   endmethod.
 
 
-  method GET_XMLSTR.
-      xmlstr = gv_xmlstr.
-  endmethod.
+  METHOD get_xmlstr.
+    me->set_namespaces( ).
+    xmlstr = me->gv_xmlstr.
+  ENDMETHOD.
 
 
 METHOD nest.
@@ -71,7 +74,7 @@ METHOD nest.
   DATA: gt_flattab_n TYPE TABLE OF ty_flattab_n,
         lv_stream    TYPE string,
         lv_name      TYPE string,
-        iterator     TYPE REF TO if_ixml_node_iterator,
+        lcl_iterator     TYPE REF TO if_ixml_node_iterator,
         lc_node      TYPE REF TO if_ixml_node.
 
   DATA: lc_prevnode TYPE REF TO if_ixml_node.
@@ -132,15 +135,15 @@ METHOD nest.
       lc_prevnode = <flattab_n>-node.
     ENDLOOP.
   ELSE.
-    iterator = me->gcl_document->create_iterator( ).
+    lcl_iterator = me->gcl_document->create_iterator( ).
 
     DO 1 TIMES.
-      <flattab_n>-node = iterator->get_next( ).
+      <flattab_n>-node = lcl_iterator->get_next( ).
     ENDDO.
 
     LOOP AT gt_flattab_n ASSIGNING <flattab_n>.
       CLEAR: lv_name.
-      <flattab_n>-node = iterator->get_next( ).
+      <flattab_n>-node = lcl_iterator->get_next( ).
 
       IF <flattab_n>-node IS INITIAL.
         <flattab_n>-node = me->gcl_root.
@@ -174,6 +177,10 @@ METHOD nest.
                                 )->create_ostream_cstring( string = gv_xmlstr
                                 ) )->render( ).
 ENDMETHOD.
+
+
+  method SET_NAMESPACES.
+  endmethod.
 
 
   METHOD set_node.

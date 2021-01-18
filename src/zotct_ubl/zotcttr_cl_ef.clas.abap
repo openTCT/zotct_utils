@@ -23,8 +23,11 @@ protected section.
   data GC_DS type STRING value 'http://www.w3.org/2000/09/xmldsig#' ##NO_TEXT.
   data GC_XSI type STRING value 'http://www.w3.org/2001/XMLSchema-instance' ##NO_TEXT.
   data GC_SCHEMALOCATION type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 ../xsd/maindoc/UBL-Invoice-2.1.xsd' ##NO_TEXT.
+  data GC_NS8 type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2' ##NO_TEXT.
+  data GC_DOCNAME type STRING value 'Invoice' ##NO_TEXT.
 
-  methods SET_NAMESPACES .
+  methods SET_NAMESPACES
+    redefinition .
 private section.
 ENDCLASS.
 
@@ -164,6 +167,56 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
 
   METHOD set_namespaces.
+*CALL METHOD SUPER->SET_NAMESPACES
+*    .
+
+*** set namespaces redefinition
+    DATA : lcl_iterator    TYPE REF TO if_ixml_node_iterator,
+           lv_name     TYPE string,
+           lcl_element TYPE REF TO if_ixml_element,
+           lcl_node    TYPE REF TO if_ixml_node,
+           lcl_attr    TYPE REF TO if_ixml_attribute.
+
+
+    lcl_iterator = me->gcl_document->create_iterator( ).
+    lcl_node = lcl_iterator->get_next( ).
+
+    WHILE lcl_node IS NOT INITIAL.
+
+      CASE lcl_node->get_type( ).
+
+        WHEN if_ixml_node=>co_node_element.
+          lcl_element ?= lcl_node.
+
+          lv_name = lcl_element->get_name( ).
+          IF lv_name EQ me->gc_docname.
+            lcl_element->set_attribute( name = 'xmlns' value = gc_xmlns ).
+            lcl_element->set_attribute( name = 'xmlns:cac' value = gc_cac ).
+            lcl_element->set_attribute( name = 'xmlns:cbc' value = gc_cbc ).
+            lcl_element->set_attribute( name = 'xmlns:ds' value = gc_ds ).
+            lcl_element->set_attribute( name = 'xmlns:ext' value = gc_ext ).
+            lcl_element->set_attribute( name = 'xmlns:ns8' value = gc_ns8 ).
+            lcl_element->set_attribute( name = 'xmlns:xades' value = gc_xades ).
+            lcl_element->set_attribute( name = 'xmlns:xsi' value = gc_xsi ).
+            lcl_element->set_attribute( name = 'xmlns:schemaLocation' value = gc_schemalocation ).
+            lcl_element->set_attribute( name = 'xmlns:ccts' value = gc_ccts ).
+            lcl_element->set_attribute( name = 'xmlns:ubltr' value = gc_ubltr ).
+            lcl_element->set_attribute( name = 'xmlns:qdt' value = gc_qdt ).
+            lcl_element->set_attribute( name = 'xmlns:udt' value = gc_udt ).
+
+            EXIT.
+          ENDIF.
+      ENDCASE.
+
+      lcl_node = lcl_iterator->get_next( ).
+    ENDWHILE.
+
+    CLEAR me->gv_xmlstr.
+
+    me->gcl_ixml->create_renderer( document = me->gcl_document
+                                ostream  = me->gcl_ixml->create_stream_factory(
+                                )->create_ostream_cstring( string = gv_xmlstr
+                                ) )->render( ).
 
 
   ENDMETHOD.
