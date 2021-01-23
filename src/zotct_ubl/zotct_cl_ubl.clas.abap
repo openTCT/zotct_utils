@@ -4,6 +4,7 @@ class ZOTCT_CL_UBL definition
 
 public section.
 
+  methods NEST .
   methods SET_NODE
     importing
       !UBLTAB type ZOTCT_TT0002 .
@@ -43,7 +44,6 @@ protected section.
 private section.
 
   methods FLATTEN .
-  methods NEST .
 ENDCLASS.
 
 
@@ -74,10 +74,16 @@ METHOD nest.
   DATA: gt_flattab_n TYPE TABLE OF ty_flattab_n,
         lv_stream    TYPE string,
         lv_name      TYPE string,
-        lcl_iterator     TYPE REF TO if_ixml_node_iterator,
-        lc_node      TYPE REF TO if_ixml_node.
+        lcl_iterator TYPE REF TO if_ixml_node_iterator,
+        lcl_node     TYPE REF TO if_ixml_node,
+        lcl_itenode  TYPE REF TO if_ixml_node,
+        lcl_root     TYPE REF TO if_ixml_element,
+        lcl_element  TYPE REF TO if_ixml_element,
 
-  DATA: lc_prevnode TYPE REF TO if_ixml_node.
+        lv_counter   TYPE p,
+        lv_times     TYPE p.
+
+  DATA: lcl_prevnode TYPE REF TO if_ixml_node.
 
   FIELD-SYMBOLS : <ubl>       TYPE any,
                   <flattab_n> TYPE ty_flattab_n,
@@ -108,74 +114,43 @@ METHOD nest.
     ENDIF.
   ENDLOOP.
 *** Create XML
+  TYPES: BEGIN OF ty_nodecoll,
+           flattab LIKE gt_flattab_n,
+         END OF ty_nodecoll.
 
-  IF me->gcl_ixml IS INITIAL.
-    me->gcl_ixml     = cl_ixml=>create( ). " if_ixml
-    me->gcl_document = me->gcl_ixml->create_document( ). "IF_IXML_DOCUMENT
 
-    CLEAR: lc_prevnode.
-    LOOP AT gt_flattab_n ASSIGNING <flattab_n>.
+  DATA: lv_seqnr     TYPE seqnr,
+        lv_seqnr_max TYPE string,
+        lt_nodecoll  TYPE TABLE OF ty_nodecoll,
+        gt_flattab_d TYPE TABLE OF ty_flattab_n.
 
-      <flattab_n>-node = me->gcl_document->create_element_ns( name = <flattab_n>-xmlkey ).
-      IF <flattab_n>-xmlval IS NOT INITIAL.
-        <flattab_n>-node->append_child( me->gcl_document->create_text( <flattab_n>-xmlval ) ).
-      ENDIF.
+  FIELD-SYMBOLS: <flattab_d> LIKE LINE OF gt_flattab_d,
+                 <nodecoll>  LIKE LINE OF lt_nodecoll.
 
-      IF me->gcl_root IS INITIAL.
-        me->gcl_root ?= <flattab_n>-node.
-      ENDIF.
+  CLEAR: lv_seqnr,
+         lv_seqnr_max.
 
-      IF lc_prevnode IS INITIAL.
-        me->gcl_root->append_child( <flattab_n>-node ).
-        me->gcl_document->append_child( me->gcl_root ).
-      ELSE.
-        lc_prevnode->append_child( <flattab_n>-node ).
-      ENDIF.
+  CALL METHOD zotct_cl_itab_ext=>max
+    EXPORTING
+      iv_colname = 'SEQNR'
+      it_table   = gt_flattab_n
+    RECEIVING
+      r_val      = lv_seqnr_max.
 
-      lc_prevnode = <flattab_n>-node.
+  DO lv_seqnr_max TIMES.
+    lv_seqnr = lv_seqnr + 1.
+    LOOP AT gt_flattab_n ASSIGNING <flattab_n> WHERE seqnr EQ lv_seqnr.
+      APPEND INITIAL LINE TO gt_flattab_d ASSIGNING <flattab_d>.
+
+      MOVE-CORRESPONDING <flattab_n> TO <flattab_d>.
     ENDLOOP.
-  ELSE.
-    lcl_iterator = me->gcl_document->create_iterator( ).
+    APPEND INITIAL LINE TO lt_nodecoll ASSIGNING <nodecoll>.
+    <nodecoll>-flattab = gt_flattab_d.
+    CLEAR: gt_flattab_d[].
+  ENDDO.
 
-    DO 1 TIMES.
-      <flattab_n>-node = lcl_iterator->get_next( ).
-    ENDDO.
+*** TODO: Render XML tree
 
-    LOOP AT gt_flattab_n ASSIGNING <flattab_n>.
-      CLEAR: lv_name.
-      <flattab_n>-node = lcl_iterator->get_next( ).
-
-      IF <flattab_n>-node IS INITIAL.
-        <flattab_n>-node = me->gcl_root.
-        lc_prevnode = <flattab_n>-node.
-      ENDIF.
-
-      lv_name = <flattab_n>-node->get_name( ).
-
-      IF lv_name EQ <flattab_n>-xmlkey.
-        lc_prevnode = <flattab_n>-node.
-        CONTINUE.
-      ELSE.
-        <flattab_n>-node = me->gcl_document->create_element_ns( name = <flattab_n>-xmlkey ).
-
-        IF <flattab_n>-xmlval IS NOT INITIAL.
-          <flattab_n>-node->append_child( me->gcl_document->create_text( <flattab_n>-xmlval ) ).
-        ENDIF.
-
-        IF lc_prevnode is INITIAL.
-          lc_prevnode = me->gcl_root.
-        ENDIF.
-
-        lc_prevnode->append_child( <flattab_n>-node ).
-        lc_prevnode = <flattab_n>-node.
-      ENDIF.
-    ENDLOOP.
-  ENDIF.
-
-  me->gcl_ixml->create_renderer( document = me->gcl_document
-                                ostream  = me->gcl_ixml->create_stream_factory(
-                                )->create_ostream_cstring( string = gv_xmlstr
-                                ) )->render( ).
 ENDMETHOD.
 
 
@@ -189,14 +164,19 @@ ENDMETHOD.
           gt_split2 TYPE TABLE OF string,
           lv_splits TYPE p,
           lv_cnt    TYPE p,
-          lv_reptxt TYPE string.
+          lv_reptxt TYPE string,
+          lv_nodnr  TYPE seqnr.
 
     FIELD-SYMBOLS: <split>   TYPE string,
                    <split2>  TYPE string,
                    <flattab> LIKE LINE OF me->gt_flattab,
                    <ubltab>  TYPE zotct_s0002.
 
+    CLEAR: lv_nodnr.
+
     LOOP AT ubltab ASSIGNING <ubltab>.
+      lv_nodnr = lv_nodnr + 1.
+
       CLEAR: gt_split1[],
             gt_split2[],
             lv_splits,
@@ -206,11 +186,13 @@ ENDMETHOD.
 
       SPLIT <ubltab>-xmlkey AT '->' INTO TABLE gt_split1.
       DESCRIBE TABLE gt_split1 LINES lv_splits.
-      CLEAR me->gt_flattab[].
+*      CLEAR me->gt_flattab[].
 
       LOOP AT gt_split1 ASSIGNING <split>.
         lv_cnt = lv_cnt + 1.
         APPEND INITIAL LINE TO me->gt_flattab ASSIGNING <flattab>.
+        <flattab>-seqnr = lv_cnt.
+        <flattab>-nodnr = lv_nodnr.
 
         IF <split> CA '[]'.
           SPLIT <split> AT '[' INTO TABLE gt_split2.
@@ -236,10 +218,7 @@ ENDMETHOD.
         IF lv_cnt EQ lv_splits.
           <flattab>-xmlval = <ubltab>-xmlval.
         ENDIF.
-
       ENDLOOP.
-
-      me->nest( ).
     ENDLOOP.
   ENDMETHOD.
 ENDCLASS.

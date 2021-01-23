@@ -11,6 +11,18 @@ public section.
   class-methods REVERSE
     changing
       !CT_TABLE type STANDARD TABLE .
+  class-methods MAX
+    importing
+      !IV_COLNAME type STRING
+      !IT_TABLE type STANDARD TABLE
+    returning
+      value(R_VAL) type STRING .
+  class-methods MIN
+    importing
+      !IV_COLNAME type STRING
+      !IT_TABLE type STANDARD TABLE
+    returning
+      value(R_VAL) type STRING .
 protected section.
 private section.
 ENDCLASS.
@@ -18,6 +30,60 @@ ENDCLASS.
 
 
 CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
+
+
+  METHOD max.
+    FIELD-SYMBOLS: <colname> TYPE string,
+                   <table>   TYPE any,
+                   <value>   TYPE any,
+                   <restab>  TYPE ANY TABLE,
+                   <res>     TYPE any.
+
+    DATA: l_ref TYPE REF TO data.
+
+    CREATE DATA: l_ref LIKE it_table.
+    ASSIGN: l_ref->* TO <restab>,
+            iv_colname TO <colname>.
+
+    <restab> = it_table.
+
+    SORT <restab> BY (<colname>) DESCENDING.
+
+    LOOP AT <restab> ASSIGNING <res>.
+      ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
+      IF <value> IS ASSIGNED.
+        r_val = <value>.
+      ENDIF.
+      EXIT.
+    ENDLOOP.
+  ENDMETHOD.
+
+
+  METHOD min.
+    FIELD-SYMBOLS: <colname> TYPE string,
+                   <table>   TYPE any,
+                   <value>   TYPE any,
+                   <restab>  TYPE ANY TABLE,
+                   <res>     TYPE any.
+
+    DATA: l_ref TYPE REF TO data.
+
+    CREATE DATA: l_ref LIKE it_table.
+    ASSIGN: l_ref->* TO <restab>,
+            iv_colname TO <colname>.
+
+    <restab> = it_table.
+
+    SORT <restab> BY (<colname>) ASCENDING.
+
+    LOOP AT <restab> ASSIGNING <res>.
+      ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
+      IF <value> IS ASSIGNED.
+        r_val = <value>.
+      ENDIF.
+      EXIT.
+    ENDLOOP.
+  ENDMETHOD.
 
 
   METHOD reverse.
