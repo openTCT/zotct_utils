@@ -149,7 +149,46 @@ METHOD nest.
     CLEAR: gt_flattab_d[].
   ENDDO.
 
-*** TODO: Render XML tree
+*** Render XML tree
+  CLEAR: lcl_node.
+
+  me->gcl_ixml = cl_ixml=>create( ).
+  me->gcl_document = me->gcl_ixml->create_document( ).
+
+
+  LOOP AT lt_nodecoll ASSIGNING <nodecoll>.
+    LOOP AT <nodecoll>-flattab ASSIGNING <flattab_n>.
+
+      IF <flattab_n>-seqnr EQ 1 AND
+         <flattab_n>-nodnr EQ 1.
+        lcl_node = me->gcl_document->create_element_ns( name = <flattab_n>-xmlkey ).
+        IF <flattab_n>-xmlval IS NOT INITIAL.
+          lcl_node->append_child( me->gcl_document->create_text( <flattab_n>-xmlval ) ).
+        ENDIF.
+        me->gcl_document->append_child( lcl_node ).
+      ELSE.
+*        lcl_node = lcl_element->get_prev( ).
+        lcl_element = me->gcl_document->find_from_name_ns( name = <flattab_n>-xmlkey ).
+
+        IF lcl_element IS INITIAL.
+          lcl_element = me->gcl_document->create_element_ns( name = <flattab_n>-xmlkey ).
+          IF <flattab_n>-xmlval IS NOT INITIAL.
+            lcl_element->append_child( me->gcl_document->create_text( <flattab_n>-xmlval ) ).
+          ENDIF.
+
+        ELSE.
+          CONTINUE.
+        ENDIF.
+
+        lcl_node->append_child( lcl_element ).
+      ENDIF.
+    ENDLOOP.
+  ENDLOOP.
+
+  me->gcl_ixml->create_renderer( document = me->gcl_document
+                                ostream  = me->gcl_ixml->create_stream_factory(
+                                )->create_ostream_cstring( string = gv_xmlstr
+                                ) )->render( ).
 
 ENDMETHOD.
 
