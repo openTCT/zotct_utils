@@ -12,38 +12,49 @@ public section.
   methods GET_XMLSTR
     returning
       value(XMLSTR) type STRINGVAL .
-protected section.
+PROTECTED SECTION.
 
-  types:
+  TYPES:
     BEGIN OF ty_data ,
-            data TYPE REF TO data ,
-            xml_name TYPE prx_ifrnam ,
-            abap_name TYPE prx_r3name ,
-            r3_name TYPE prx_r3name ,
-            r3_objtyp TYPE prx_r3obj ,
-            END OF ty_data .
+      data      TYPE REF TO data,
+      xml_name  TYPE prx_ifrnam,
+      abap_name TYPE prx_r3name,
+      r3_name   TYPE prx_r3name,
+      r3_objtyp TYPE prx_r3obj,
+    END OF ty_data .
 
-  data:
+  TYPES: BEGIN OF ty_nodemap,
+           node TYPE string,
+           id   TYPE string,
+           obj  TYPE REF TO if_ixml_element,
+           xmlkey TYPE string,
+           parentnode TYPE string,
+         END OF ty_nodemap.
+
+  DATA:
     gt_t0001   TYPE TABLE OF zotct_t0001 .
-  data:
+  DATA:
     gt_sproxdat TYPE TABLE OF sproxdat .
-  data:
+  DATA:
     gt_tadir_v TYPE TABLE OF sproxhdr_tadir_v .
-  data:
+  DATA:
     gt_ttyp TYPE TABLE OF ty_data .
-  data:
+  DATA:
     gt_tabl TYPE TABLE OF ty_data .
-  data GV_XMLSTR type STRINGVAL .
-  data GS_UBL type ref to DATA .
-  data GT_FLATTAB type ZOTCT_TT0001 .
-  data GCL_DOCUMENT type ref to IF_IXML_DOCUMENT .
-  data GCL_ROOT type ref to IF_IXML_ELEMENT .
-  data GCL_IXML type ref to IF_IXML .
+  DATA:
+    gt_nodemap TYPE TABLE OF ty_nodemap .
+  DATA gv_xmlstr TYPE stringval .
+  DATA gs_ubl TYPE REF TO data .
+  DATA gt_flattab TYPE zotct_tt0001 .
+  DATA gcl_document TYPE REF TO if_ixml_document .
+  DATA gcl_root TYPE REF TO if_ixml_element .
+  DATA gcl_ixml TYPE REF TO if_ixml .
 
-  methods SET_NAMESPACES .
+  METHODS set_namespaces .
 private section.
 
   methods FLATTEN .
+  methods DERIVE_PARENT .
 ENDCLASS.
 
 
@@ -51,8 +62,82 @@ ENDCLASS.
 CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
 
-  method FLATTEN.
-  endmethod.
+  METHOD derive_parent.
+    FIELD-SYMBOLS: <nodemap> LIKE LINE OF me->gt_nodemap,
+                   <flattab> LIKE LINE OF me->gt_flattab,
+                   <split>   TYPE string.
+
+    DATA: lv_nodestr TYPE string,
+          lv_counter TYPE p,
+          lt_split   TYPE TABLE OF string,
+          lv_lines TYPE p.
+
+    CLEAR: lv_nodestr.
+
+    LOOP AT me->gt_flattab ASSIGNING <flattab>.
+      IF <flattab>-xmlval IS INITIAL.
+        IF lv_nodestr IS NOT INITIAL.
+          CONCATENATE lv_nodestr <flattab>-xmlkey INTO lv_nodestr SEPARATED BY '->'.
+        ELSE.
+          CONCATENATE lv_nodestr <flattab>-xmlkey INTO lv_nodestr.
+        ENDIF.
+
+      ELSE.
+        APPEND INITIAL LINE TO me->gt_nodemap ASSIGNING <nodemap>.
+        <nodemap>-node = lv_nodestr.
+
+        <flattab>-parentkey = lv_nodestr.
+
+        CLEAR: lv_nodestr.
+      ENDIF.
+    ENDLOOP.
+
+    DELETE ADJACENT DUPLICATES FROM me->gt_nodemap COMPARING node.
+
+    CLEAR: lv_counter.
+
+    LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
+      lv_counter = lv_counter + 1.
+      <nodemap>-id = lv_counter.
+      CLEAR: lt_split[].
+      SPLIT <nodemap>-node AT '->' INTO TABLE lt_split.
+      LOOP AT lt_split ASSIGNING <split>.
+        <nodemap>-xmlkey = <split>.
+      ENDLOOP.
+    ENDLOOP.
+
+    LOOP AT me->gt_flattab ASSIGNING <flattab>.
+      READ TABLE me->gt_nodemap ASSIGNING <nodemap> WITH KEY node = <flattab>-parentkey.
+      IF sy-subrc EQ 0.
+        <flattab>-parent = <nodemap>-id.
+      ENDIF.
+    ENDLOOP.
+
+*    Find previous node
+    LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
+      CLEAR: lt_split[],
+             lv_lines,
+             lv_counter.
+      SPLIT <nodemap>-node AT '->' INTO TABLE lt_split.
+      DESCRIBE TABLE lt_split LINES lv_lines.
+      LOOP AT lt_split ASSIGNING <split>.
+        lv_counter = lv_counter + 1.
+        IF lv_counter EQ lv_lines.
+          EXIT.
+        ENDIF.
+        IF <nodemap>-parentnode IS NOT INITIAL.
+          CONCATENATE <nodemap>-parentnode <split> INTO <nodemap>-parentnode SEPARATED BY '->'.
+        ELSE.
+          CONCATENATE <nodemap>-parentnode <split> INTO <nodemap>-parentnode.
+        ENDIF.
+      ENDLOOP.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+  METHOD flatten.
+  ENDMETHOD.
 
 
   method GET_NODE.
@@ -72,24 +157,24 @@ METHOD nest.
          TYPES END OF ty_flattab_n.
 
   DATA: gt_flattab_n TYPE TABLE OF ty_flattab_n,
-        lv_stream    TYPE string,
-        lv_name      TYPE string,
-        lcl_iterator TYPE REF TO if_ixml_node_iterator,
-        lcl_node     TYPE REF TO if_ixml_node,
-        lcl_itenode  TYPE REF TO if_ixml_node,
-        lcl_root     TYPE REF TO if_ixml_element,
-        lcl_element  TYPE REF TO if_ixml_element,
+        lcl_ixml     TYPE REF TO if_ixml,
+*        lv_stream    TYPE string,
+*        lv_name      TYPE string,
+*        lcl_iterator TYPE REF TO if_ixml_node_iterator,
+*        lcl_node     TYPE REF TO if_ixml_node,
+*        lcl_itenode  TYPE REF TO if_ixml_node,
+*        lcl_root     TYPE REF TO if_ixml_element,
+*        lcl_element  TYPE REF TO if_ixml_element,
 
         lv_counter   TYPE p,
         lv_times     TYPE p.
-
-  DATA: lcl_prevnode TYPE REF TO if_ixml_node.
 
   FIELD-SYMBOLS : <ubl>       TYPE any,
                   <flattab_n> TYPE ty_flattab_n,
                   <flattab>   TYPE zotct_s0001,
                   <tabl>      LIKE LINE OF me->gt_tabl,
                   <ttyp>      LIKE LINE OF me->gt_ttyp.
+
 
   LOOP AT gt_flattab ASSIGNING <flattab>.
     APPEND INITIAL LINE TO gt_flattab_n ASSIGNING <flattab_n>.
@@ -149,40 +234,47 @@ METHOD nest.
     CLEAR: gt_flattab_d[].
   ENDDO.
 
-*** Render XML tree
-  CLEAR: lcl_node.
+  me->derive_parent( ).
 
-  me->gcl_ixml = cl_ixml=>create( ).
+*** Render XML tree
+
+  me->gcl_ixml     = cl_ixml=>create( ).
   me->gcl_document = me->gcl_ixml->create_document( ).
 
+  FIELD-SYMBOLS: <nodemap> TYPE ty_nodemap.
 
-  LOOP AT lt_nodecoll ASSIGNING <nodecoll>.
-    LOOP AT <nodecoll>-flattab ASSIGNING <flattab_n>.
+  DATA: lcl_parent TYPE REF TO if_ixml_element.
+*  Create Parent Node
+  LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
+    <nodemap>-obj = me->gcl_document->create_simple_element_ns( name = <nodemap>-xmlkey
+                                                                parent = me->gcl_document ).
+    EXIT.
+  ENDLOOP.
+*  Create Children - from nodemap
 
-      IF <flattab_n>-seqnr EQ 1 AND
-         <flattab_n>-nodnr EQ 1.
-        lcl_node = me->gcl_document->create_element_ns( name = <flattab_n>-xmlkey ).
-        IF <flattab_n>-xmlval IS NOT INITIAL.
-          lcl_node->append_child( me->gcl_document->create_text( <flattab_n>-xmlval ) ).
-        ENDIF.
-        me->gcl_document->append_child( lcl_node ).
-      ELSE.
-*        lcl_node = lcl_element->get_prev( ).
-        lcl_element = me->gcl_document->find_from_name_ns( name = <flattab_n>-xmlkey ).
+  FIELD-SYMBOLS: <parent> TYPE ty_nodemap.
 
-        IF lcl_element IS INITIAL.
-          lcl_element = me->gcl_document->create_element_ns( name = <flattab_n>-xmlkey ).
-          IF <flattab_n>-xmlval IS NOT INITIAL.
-            lcl_element->append_child( me->gcl_document->create_text( <flattab_n>-xmlval ) ).
-          ENDIF.
+  LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
+    IF <nodemap>-id EQ 1.
+      CONTINUE.
+    ENDIF.
+*    Find parent
+    READ TABLE me->gt_nodemap ASSIGNING <parent> WITH KEY node = <nodemap>-parentnode.
+    IF sy-subrc EQ 0.
+      <nodemap>-obj = me->gcl_document->create_simple_element_ns( name = <nodemap>-xmlkey
+                                                                  parent = <parent>-obj ).
+    ENDIF.
+  ENDLOOP.
 
-        ELSE.
-          CONTINUE.
-        ENDIF.
+*  Create Children - from flattab
 
-        lcl_node->append_child( lcl_element ).
-      ENDIF.
-    ENDLOOP.
+  LOOP AT gt_flattab ASSIGNING <flattab> WHERE xmlval IS NOT INITIAL.
+    READ TABLE me->gt_nodemap ASSIGNING <parent> WITH KEY id = <flattab>-parent.
+    IF sy-subrc EQ 0.
+      <flattab>-obj = me->gcl_document->create_simple_element_ns( name = <flattab>-xmlkey
+                                                                  value = <flattab>-xmlval
+                                                                  parent = <parent>-obj ).
+    ENDIF.
   ENDLOOP.
 
   me->gcl_ixml->create_renderer( document = me->gcl_document
@@ -259,5 +351,6 @@ ENDMETHOD.
         ENDIF.
       ENDLOOP.
     ENDLOOP.
+
   ENDMETHOD.
 ENDCLASS.
