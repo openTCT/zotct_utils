@@ -77,6 +77,9 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
     CLEAR: lv_nodestr.
 
     LOOP AT me->gt_flattab ASSIGNING <flattab>.
+      IF <flattab>-attrib IS NOT INITIAL.
+        CONTINUE.
+      ENDIF.
       IF <flattab>-xmlval IS INITIAL.
         IF lv_nodestr IS NOT INITIAL.
           CONCATENATE lv_nodestr <flattab>-xmlkey INTO lv_nodestr SEPARATED BY '->'.
@@ -145,6 +148,9 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
       ENDLOOP.
     ENDLOOP.
 
+    DELETE ADJACENT DUPLICATES FROM me->gt_nodemap COMPARING node.
+
+
   ENDMETHOD.
 
 
@@ -166,7 +172,8 @@ METHOD nest.
   DATA: lcl_ixml   TYPE REF TO if_ixml,
 
         lv_counter TYPE p,
-        lv_times   TYPE p.
+        lv_times   TYPE p,
+        lv_aseqnr  TYPE p.
 
   FIELD-SYMBOLS : <ubl>      TYPE any,
                   <flattab>  TYPE zotct_s0001,
@@ -259,7 +266,8 @@ METHOD nest.
     EXIT.
   ENDLOOP.
 *  Create Children - from nodemap
-  FIELD-SYMBOLS: <parent> TYPE ty_nodemap.
+  FIELD-SYMBOLS: <parent>  TYPE ty_nodemap,
+                 <aparent> TYPE zotct_s0001.
 
   LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
     IF <nodemap>-id EQ 1.
@@ -273,10 +281,34 @@ METHOD nest.
 
       LOOP AT me->gt_flattab ASSIGNING <flattab> WHERE xmlval IS NOT INITIAL
                                                    AND parent EQ <nodemap>-id.
-        <flattab>-obj = me->gcl_document->create_simple_element_ns( name = <flattab>-xmlkey
+
+        IF <flattab>-attrib IS INITIAL.
+          <flattab>-obj = me->gcl_document->create_simple_element_ns( name = <flattab>-xmlkey
                                                                   value = <flattab>-xmlval
                                                                   parent = <nodemap>-obj ).
+        ENDIF.
       ENDLOOP.
+    ENDIF.
+  ENDLOOP.
+
+  LOOP AT me->gt_flattab ASSIGNING <flattab> WHERE attrib IS NOT INITIAL.
+    CLEAR: lv_aseqnr.
+
+    lv_aseqnr = <flattab>-seqnr - 1.
+
+    READ TABLE me->gt_flattab WITH KEY nodnr = <flattab>-nodnr
+                                       seqnr = lv_aseqnr
+                             ASSIGNING <aparent>.
+    IF sy-subrc EQ 0.
+      READ TABLE me->gt_flattab WITH KEY seqnr = lv_aseqnr
+                                         xmlkey = <aparent>-xmlkey
+                               ASSIGNING <aparent>.
+      IF sy-subrc EQ 0.
+        IF <aparent>-obj IS INITIAL.
+          CONTINUE.
+        ENDIF.
+        <aparent>-obj->set_attribute_ns( name = <flattab>-xmlkey value = <flattab>-xmlval ).
+      ENDIF.
     ENDIF.
   ENDLOOP.
 
