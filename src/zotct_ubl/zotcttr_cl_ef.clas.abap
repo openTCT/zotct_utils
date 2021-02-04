@@ -28,6 +28,8 @@ protected section.
 
   methods SET_NAMESPACES
     redefinition .
+  methods GET_PREFIX
+    redefinition .
 private section.
 ENDCLASS.
 
@@ -163,6 +165,56 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
       AND fieldname EQ 'STANDARD_BUSINESS_DOCUMENT'.
 
     CREATE DATA gs_ubl TYPE (lv_tabname).
+  ENDMETHOD.
+
+
+  METHOD get_prefix.
+    DATA: lv_ifrname TYPE string.
+
+    FIELD-SYMBOLS: <tadir_v> LIKE LINE OF me->gt_tadir_v.
+
+    READ TABLE me->gt_tadir_v WITH KEY ifr_name = iv_xmlkey ASSIGNING <tadir_v>.
+    IF sy-subrc EQ 0.
+      rv_prefix = <tadir_v>-ifr_nspce.
+    ELSE.
+      CLEAR: lv_ifrname.
+      CONCATENATE iv_xmlkey 'Type' INTO lv_ifrname.
+      READ TABLE me->gt_tadir_v WITH KEY ifr_name = lv_ifrname ASSIGNING <tadir_v>.
+      IF sy-subrc EQ 0.
+        rv_prefix = <tadir_v>-ifr_nspce.
+      ENDIF.
+    ENDIF.
+
+    CASE rv_prefix.
+      WHEN gc_xmlns.
+        rv_prefix = 'xmlns'.
+      WHEN gc_cac.
+        rv_prefix = 'cac'.
+      WHEN gc_xades.
+        rv_prefix = 'xades'.
+      WHEN gc_udt.
+        rv_prefix = 'udt'.
+      WHEN gc_cbc.
+        rv_prefix = 'cbc'.
+      WHEN gc_ccts.
+        rv_prefix = 'ccts'.
+      WHEN gc_ubltr.
+        rv_prefix = 'ubltr'.
+      WHEN gc_qdt.
+        rv_prefix = 'qdt'.
+      WHEN gc_ext.
+        rv_prefix = 'ext'.
+      WHEN gc_ds.
+        rv_prefix = 'ds'.
+      WHEN gc_xsi.
+        rv_prefix = 'xsi'.
+      WHEN gc_schemalocation.
+        rv_prefix = 'schemaLocation'.
+      WHEN gc_ns8.
+        rv_prefix = 'ns8'.
+      WHEN gc_docname.
+        rv_prefix = 'docname'.
+    ENDCASE.
   ENDMETHOD.
 
 
