@@ -30,6 +30,7 @@ protected section.
            xmlkey TYPE string,
            parentnode TYPE string,
            r3_seqnum TYPE prx_seqnum,
+           nestcnt   TYPE syindex,
          END OF ty_nodemap .
 
   data:
@@ -52,7 +53,7 @@ protected section.
   data GCL_IXML type ref to IF_IXML .
 
   methods SET_NAMESPACES .
-  methods DERIVE_PARENT .
+  methods CREATE_NODEMAP .
   methods GET_PREFIX
     importing
       !IV_XMLKEY type STRING
@@ -61,6 +62,11 @@ protected section.
 private section.
 
   methods FLATTEN .
+  methods GENERATE_NODES
+    importing
+      !IV_XMLKEY type STRING
+    returning
+      value(RT_NODES) type STRINGTAB .
 ENDCLASS.
 
 
@@ -68,7 +74,7 @@ ENDCLASS.
 CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
 
-  METHOD derive_parent.
+  METHOD CREATE_NODEMAP.
     FIELD-SYMBOLS: <nodemap>  LIKE LINE OF me->gt_nodemap,
                    <flattab>  LIKE LINE OF me->gt_flattab,
                    <split>    TYPE string,
@@ -77,7 +83,8 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
     DATA: lv_nodestr TYPE string,
           lv_counter TYPE p,
           lt_split   TYPE TABLE OF string,
-          lv_lines TYPE p.
+          lv_lines TYPE p,
+          lv_nestcnt TYPE syindex.
 
     CLEAR: lv_nodestr.
 
@@ -102,10 +109,32 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
 
+*** Generate inter-nodes
+
+    DATA: lt_collection TYPE TABLE OF string,
+          ls_collection TYPE string,
+          lt_return TYPE TABLE OF string.
+
+    FIELD-SYMBOLS: <return> TYPE string,
+                   <collection> TYPE string.
+
+    LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
+      lt_return = me->generate_nodes( iv_xmlkey = <nodemap>-node ).
+
+      LOOP AT lt_return ASSIGNING <return>.
+        ls_collection = <return>.
+        COLLECT ls_collection INTO lt_collection.
+      ENDLOOP.
+    ENDLOOP.
+
+    LOOP AT lt_collection ASSIGNING <collection>.
+      APPEND INITIAL LINE TO me->gt_nodemap ASSIGNING <nodemap>.
+      <nodemap>-node = <collection>.
+    ENDLOOP.
+
     DELETE ADJACENT DUPLICATES FROM me->gt_nodemap COMPARING node.
 
-    SORT me->gt_nodemap BY node ASCENDING
-                           r3_seqnum ASCENDING.
+
 
     CLEAR: lv_counter.
 
@@ -117,6 +146,9 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
       LOOP AT lt_split ASSIGNING <split>.
         <nodemap>-xmlkey = <split>.
       ENDLOOP.
+      CLEAR: lv_nestcnt.
+      DESCRIBE TABLE lt_split LINES lv_nestcnt.
+      <nodemap>-nestcnt = lv_nestcnt.
     ENDLOOP.
 
     LOOP AT me->gt_flattab ASSIGNING <flattab>.
@@ -153,13 +185,45 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
       ENDLOOP.
     ENDLOOP.
 
+    SORT me->gt_nodemap BY node ASCENDING.
+
     DELETE ADJACENT DUPLICATES FROM me->gt_nodemap COMPARING node.
 
+*    SORT me->gt_nodemap BY node ASCENDING
+*                           r3_seqnum ASCENDING.
+
+*    SORT me->gt_nodemap BY r3_seqnum ASCENDING
+*                           id ASCENDING.
+
+    SORT me->gt_nodemap BY nestcnt ASCENDING
+                           r3_seqnum ASCENDING.
 
   ENDMETHOD.
 
 
   METHOD flatten.
+  ENDMETHOD.
+
+
+  METHOD generate_nodes.
+    DATA: lt_split TYPE TABLE OF string,
+          lv_string TYPE string.
+
+    FIELD-SYMBOLS: <split> TYPE string,
+                   <nodes> TYPE string.
+
+    SPLIT iv_xmlkey AT '->' INTO TABLE lt_split.
+
+    LOOP AT lt_split ASSIGNING <split>.
+      IF lv_string IS INITIAL.
+        CONCATENATE lv_string <split> INTO lv_string.
+      ELSE.
+        CONCATENATE lv_string <split> INTO lv_string SEPARATED BY '->'.
+      ENDIF.
+
+      APPEND INITIAL LINE TO rt_nodes ASSIGNING <nodes>.
+      <nodes> = lv_string.
+    ENDLOOP.
   ENDMETHOD.
 
 
@@ -254,7 +318,7 @@ METHOD nest.
     CLEAR: gt_flattab_d[].
   ENDDO.
 
-  me->derive_parent( ).
+  me->create_nodemap( ).
 
 *** Render XML tree
 
@@ -341,12 +405,6 @@ METHOD nest.
       ENDIF.
     ENDIF.
   ENDLOOP.
-
-  me->gcl_ixml->create_renderer( document = me->gcl_document
-                                ostream  = me->gcl_ixml->create_stream_factory(
-                                )->create_ostream_cstring( string = gv_xmlstr
-                                ) )->render( ).
-
 ENDMETHOD.
 
 
