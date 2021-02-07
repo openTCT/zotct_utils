@@ -9,6 +9,9 @@ public section.
   methods CONSTRUCTOR
     exceptions
       CX_SCSM_CUSTOMIZING .
+
+  methods GET_XMLSTR
+    redefinition .
 protected section.
 
   data GC_XMLNS type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2' ##NO_TEXT.
@@ -22,13 +25,13 @@ protected section.
   data GC_EXT type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2' ##NO_TEXT.
   data GC_DS type STRING value 'http://www.w3.org/2000/09/xmldsig#' ##NO_TEXT.
   data GC_XSI type STRING value 'http://www.w3.org/2001/XMLSchema-instance' ##NO_TEXT.
-  data GC_SCHEMALOCATION type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 ../xsd/maindoc/UBL-Invoice-2.1.xsd' ##NO_TEXT.
+  data GC_SCHEMALOCATION type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 UBL-Invoice-2.1.xsd' ##NO_TEXT.
   data GC_NS8 type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2' ##NO_TEXT.
   data GC_DOCNAME type STRING value 'Invoice' ##NO_TEXT.
 
-  methods SET_NAMESPACES
-    redefinition .
   methods GET_PREFIX
+    redefinition .
+  methods SET_NAMESPACES
     redefinition .
 private section.
 ENDCLASS.
@@ -218,16 +221,33 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD get_xmlstr.
+
+    me->set_namespaces( ).
+
+    DATA: lv_encoding TYPE string.
+
+    CLEAR: lv_encoding.
+
+
+    CONCATENATE '<?xml version="1.0" encoding="utf-8"?>' cl_abap_char_utilities=>newline INTO lv_encoding.
+
+    REPLACE ALL OCCURRENCES OF '<?xml version="1.0" encoding="utf-16"?>' IN me->gv_xmlstr WITH lv_encoding.
+
+    xmlstr = me->gv_xmlstr.
+  ENDMETHOD.
+
+
   METHOD set_namespaces.
 *CALL METHOD SUPER->SET_NAMESPACES
 *    .
 
 *** set namespaces redefinition
-    DATA : lcl_iterator    TYPE REF TO if_ixml_node_iterator,
-           lv_name     TYPE string,
-           lcl_element TYPE REF TO if_ixml_element,
-           lcl_node    TYPE REF TO if_ixml_node,
-           lcl_attr    TYPE REF TO if_ixml_attribute.
+    DATA : lcl_iterator TYPE REF TO if_ixml_node_iterator,
+           lv_name      TYPE string,
+           lcl_element  TYPE REF TO if_ixml_element,
+           lcl_node     TYPE REF TO if_ixml_node,
+           lcl_attr     TYPE REF TO if_ixml_attribute.
 
 
     lcl_iterator = me->gcl_document->create_iterator( ).
@@ -250,7 +270,7 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
             lcl_element->set_attribute( name = 'xmlns:ns8' value = gc_ns8 ).
             lcl_element->set_attribute( name = 'xmlns:xades' value = gc_xades ).
             lcl_element->set_attribute( name = 'xmlns:xsi' value = gc_xsi ).
-            lcl_element->set_attribute( name = 'xmlns:schemaLocation' value = gc_schemalocation ).
+            lcl_element->set_attribute( name = 'xsi:schemaLocation' value = gc_schemalocation ).
             lcl_element->set_attribute( name = 'xmlns:ccts' value = gc_ccts ).
             lcl_element->set_attribute( name = 'xmlns:ubltr' value = gc_ubltr ).
             lcl_element->set_attribute( name = 'xmlns:qdt' value = gc_qdt ).
@@ -269,7 +289,5 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
                                 ostream  = me->gcl_ixml->create_stream_factory(
                                 )->create_ostream_cstring( string = gv_xmlstr
                                 ) )->render( ).
-
-
   ENDMETHOD.
 ENDCLASS.
