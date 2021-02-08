@@ -33,6 +33,8 @@ protected section.
     redefinition .
   methods SET_NAMESPACES
     redefinition .
+  methods CREATE_NODEMAP
+    redefinition .
 private section.
 ENDCLASS.
 
@@ -171,10 +173,149 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD create_nodemap.
+    CALL METHOD super->create_nodemap.
+***  Rearrange nodemap order for Turkey e-Fatura
+    FIELD-SYMBOLS: <nodemap> LIKE LINE OF me->gt_nodemap.
+
+    LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
+      CASE <nodemap>-node.
+        WHEN 'Invoice->UBLExtensions'.
+          <nodemap>-r3_seqnum = 1.
+        WHEN 'Invoice->UBLVersionID'.
+          <nodemap>-r3_seqnum = 2.
+        WHEN 'Invoice->CustomizationID'.
+          <nodemap>-r3_seqnum = 3.
+        WHEN 'Invoice->ProfileID'.
+          <nodemap>-r3_seqnum = 4.
+        WHEN 'Invoice->ID'.
+          <nodemap>-r3_seqnum = 5.
+        WHEN 'Invoice->CopyIndicator'.
+          <nodemap>-r3_seqnum = 6.
+        WHEN 'Invoice->UUID'.
+          <nodemap>-r3_seqnum = 7.
+        WHEN 'Invoice->IssueDate'.
+          <nodemap>-r3_seqnum = 8.
+        WHEN 'Invoice->IssueTime'.
+          <nodemap>-r3_seqnum = 9.
+        WHEN 'Invoice->InvoiceTypeCode'.
+          <nodemap>-r3_seqnum = 10.
+        WHEN 'Invoice->Note'.
+          <nodemap>-r3_seqnum = 11.
+        WHEN 'Invoice->DocumentCurrencyCode'.
+          <nodemap>-r3_seqnum = 12.
+        WHEN 'Invoice->TaxCurrencyCode'.
+          <nodemap>-r3_seqnum = 13.
+        WHEN 'Invoice->PricingCurrencyCode'.
+          <nodemap>-r3_seqnum = 14.
+        WHEN 'Invoice->PaymentCurrencyCode'.
+          <nodemap>-r3_seqnum = 15.
+        WHEN 'Invoice->PaymentAlternativeCurrencyCode'.
+          <nodemap>-r3_seqnum = 16.
+        WHEN 'Invoice->AccountingCost'.
+          <nodemap>-r3_seqnum = 17.
+        WHEN 'Invoice->LineCountNumeric'.
+          <nodemap>-r3_seqnum = 18.
+        WHEN 'Invoice->InvoicePeriod'.
+          <nodemap>-r3_seqnum = 19.
+        WHEN 'Invoice->OrderReference'.
+          <nodemap>-r3_seqnum = 20.
+        WHEN 'Invoice->BillingReference'.
+          <nodemap>-r3_seqnum = 21.
+        WHEN 'Invoice->DespatchDocumentReference'.
+          <nodemap>-r3_seqnum = 22.
+        WHEN 'Invoice->ReceiptDocumentReference'.
+          <nodemap>-r3_seqnum = 23.
+        WHEN 'Invoice->OriginatorDocumentReference'.
+          <nodemap>-r3_seqnum = 24.
+        WHEN 'Invoice->ContractDocumentReference'.
+          <nodemap>-r3_seqnum = 25.
+        WHEN 'Invoice->AdditionalDocumentReference'.
+          <nodemap>-r3_seqnum = 26.
+        WHEN 'Invoice->Signature'.
+          <nodemap>-r3_seqnum = 27.
+        WHEN 'Invoice->AccountingSupplierParty'.
+          <nodemap>-r3_seqnum = 28.
+        WHEN 'Invoice->AccountingCustomerParty'.
+          <nodemap>-r3_seqnum = 29.
+        WHEN 'Invoice->BuyerCustomerParty'.
+          <nodemap>-r3_seqnum = 30.
+        WHEN 'Invoice->SellerSupplierParty'.
+          <nodemap>-r3_seqnum = 31.
+        WHEN 'Invoice->TaxRepresentativeParty'.
+          <nodemap>-r3_seqnum = 32.
+        WHEN 'Invoice->Delivery'.
+          <nodemap>-r3_seqnum = 33.
+        WHEN 'Invoice->PaymentMeans'.
+          <nodemap>-r3_seqnum = 34.
+        WHEN 'Invoice->PaymentTerms'.
+          <nodemap>-r3_seqnum = 35.
+        WHEN 'Invoice->AllowanceCharge'.
+          <nodemap>-r3_seqnum = 36.
+        WHEN 'Invoice->TaxExchangeRate'.
+          <nodemap>-r3_seqnum = 37.
+        WHEN 'Invoice->PricingExchangeRate'.
+          <nodemap>-r3_seqnum = 38.
+        WHEN 'Invoice->PaymentExchangeRate'.
+          <nodemap>-r3_seqnum = 39.
+        WHEN 'Invoice->PaymentAlternativeExchangeRate'.
+          <nodemap>-r3_seqnum = 40.
+        WHEN 'Invoice->TaxTotal'.
+          <nodemap>-r3_seqnum = 41.
+        WHEN 'Invoice->WithholdingTaxTotal'.
+          <nodemap>-r3_seqnum = 42.
+        WHEN 'Invoice->LegalMonetaryTotal'.
+          <nodemap>-r3_seqnum = 43.
+        WHEN 'Invoice->InvoiceLine'.
+          <nodemap>-r3_seqnum = 44.
+        WHEN 'Invoice->AccountingSupplierParty->Party->Contact' OR
+             'Invoice->AccountingCustomerParty->Party->Contact' OR
+             'Invoice->BuyerCustomerParty->Party->Contact' OR
+             'Invoice->SellerSupplierParty->Party->Contact' OR
+             'Invoice->TaxRepresentativeParty->Party->Contact'.
+          <nodemap>-r3_seqnum = 8.
+* InvoiceLine
+        WHEN 'Invoice->InvoiceLine->ID'.
+          <nodemap>-r3_seqnum = 1.
+        WHEN 'Invoice->InvoiceLine->Note'.
+          <nodemap>-r3_seqnum = 2.
+        WHEN 'Invoice->InvoiceLine->InvoicedQuantity'.
+          <nodemap>-r3_seqnum = 3.
+        WHEN 'Invoice->InvoiceLine->LineExtensionAmount'.
+          <nodemap>-r3_seqnum = 4.
+        WHEN 'Invoice->InvoiceLine->OrderLineReference'.
+          <nodemap>-r3_seqnum = 5.
+        WHEN 'Invoice->InvoiceLine->DespatchLineReference'.
+          <nodemap>-r3_seqnum = 6.
+        WHEN 'Invoice->InvoiceLine->ReceiptLineReference'.
+          <nodemap>-r3_seqnum = 7.
+        WHEN 'Invoice->InvoiceLine->Delivery'.
+          <nodemap>-r3_seqnum = 8.
+        WHEN 'Invoice->InvoiceLine->AllowanceCharge'.
+          <nodemap>-r3_seqnum = 9.
+        WHEN 'Invoice->InvoiceLine->TaxTotal'.
+          <nodemap>-r3_seqnum = 10.
+        WHEN 'Invoice->InvoiceLine->WithholdingTaxTotal'.
+          <nodemap>-r3_seqnum = 11.
+        WHEN 'Invoice->InvoiceLine->Item'.
+          <nodemap>-r3_seqnum = 12.
+        WHEN 'Invoice->InvoiceLine->Price'.
+          <nodemap>-r3_seqnum = 13.
+      ENDCASE.
+    ENDLOOP.
+
+    SORT me->gt_nodemap BY nestcnt ASCENDING
+                           r3_seqnum ASCENDING.
+
+  ENDMETHOD.
+
+
   METHOD get_prefix.
     DATA: lv_ifrname TYPE string.
 
-    FIELD-SYMBOLS: <tadir_v> LIKE LINE OF me->gt_tadir_v.
+    FIELD-SYMBOLS: <tadir_v>  LIKE LINE OF me->gt_tadir_v,
+                   <flattab>  TYPE zotct_s0001,
+                   <sproxdat> LIKE LINE OF me->gt_sproxdat.
 
     READ TABLE me->gt_tadir_v WITH KEY ifr_name = iv_xmlkey ASSIGNING <tadir_v>.
     IF sy-subrc EQ 0.
@@ -183,6 +324,27 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
       CLEAR: lv_ifrname.
       CONCATENATE iv_xmlkey 'Type' INTO lv_ifrname.
       READ TABLE me->gt_tadir_v WITH KEY ifr_name = lv_ifrname ASSIGNING <tadir_v>.
+      IF sy-subrc EQ 0.
+        rv_prefix = <tadir_v>-ifr_nspce.
+      ELSE.
+        READ TABLE me->gt_flattab WITH KEY xmlkey = iv_xmlkey ASSIGNING <flattab>.
+        IF sy-subrc EQ 0.
+          lv_ifrname = <flattab>-abap_name.
+        ENDIF.
+
+        READ TABLE me->gt_tadir_v WITH KEY obj_name = lv_ifrname ASSIGNING <tadir_v>.
+        IF sy-subrc EQ 0.
+          rv_prefix = <tadir_v>-ifr_nspce.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF iv_xmlkey EQ 'ActualPackage'.
+      READ TABLE me->gt_sproxdat WITH KEY ifr_name = iv_xmlkey ASSIGNING <sproxdat>.
+      IF sy-subrc EQ 0.
+        lv_ifrname = <sproxdat>-obj_name.
+      ENDIF.
+      READ TABLE me->gt_tadir_v WITH KEY obj_name = lv_ifrname ASSIGNING <tadir_v>.
       IF sy-subrc EQ 0.
         rv_prefix = <tadir_v>-ifr_nspce.
       ENDIF.
