@@ -248,6 +248,7 @@ METHOD nest.
         lv_counter TYPE p,
         lv_times   TYPE p,
         lv_aseqnr  TYPE p,
+        lv_anodnr  TYPE p,
         lv_prefix  TYPE string.
 
   FIELD-SYMBOLS : <ubl>      TYPE any,
@@ -386,15 +387,18 @@ METHOD nest.
   ENDLOOP.
 
   LOOP AT me->gt_flattab ASSIGNING <flattab> WHERE attrib IS NOT INITIAL.
-    CLEAR: lv_aseqnr.
+    CLEAR: lv_aseqnr,
+           lv_anodnr.
 
     lv_aseqnr = <flattab>-seqnr - 1.
+    lv_anodnr = <flattab>-nodnr - 1.
 
     READ TABLE me->gt_flattab WITH KEY nodnr = <flattab>-nodnr
                                        seqnr = lv_aseqnr
                              ASSIGNING <aparent>.
     IF sy-subrc EQ 0.
-      READ TABLE me->gt_flattab WITH KEY seqnr = lv_aseqnr
+      READ TABLE me->gt_flattab WITH KEY nodnr = lv_anodnr
+                                         seqnr = lv_aseqnr
                                          xmlkey = <aparent>-xmlkey
                                ASSIGNING <aparent>.
       IF sy-subrc EQ 0.
