@@ -12,6 +12,10 @@ public section.
   methods GET_XMLSTR
     returning
       value(XMLSTR) type STRINGVAL .
+  methods SET_XMLSTR
+    importing
+      !XMLSTR type STRINGVAL .
+  methods FLATTEN .
 protected section.
 
   types:
@@ -61,7 +65,6 @@ protected section.
       value(RV_PREFIX) type STRING .
 private section.
 
-  methods FLATTEN .
   methods GENERATE_NODES
     importing
       !IV_XMLKEY type STRING
@@ -202,6 +205,87 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
 
   METHOD flatten.
+
+    DATA: ixml           TYPE REF TO if_ixml,
+          stream_factory TYPE REF TO if_ixml_stream_factory,
+          istream        TYPE REF TO if_ixml_istream,
+          document       TYPE REF TO if_ixml_document,
+          parser         TYPE REF TO if_ixml_parser,
+
+          gt_table       TYPE TABLE OF string,
+
+          lv_name        TYPE string,
+          lv_value       TYPE string.
+
+    FIELD-SYMBOLS: <table> TYPE string.
+
+    ixml = cl_ixml=>create( ).
+    stream_factory = ixml->create_stream_factory( ).
+
+    istream = stream_factory->create_istream_string( me->gv_xmlstr ).
+
+    document = ixml->create_document( ).
+
+    parser = ixml->create_parser( stream_factory = stream_factory
+                         istream        = istream
+                         document       = document ).
+
+    parser->parse( ).
+
+    DATA: iterator TYPE REF TO if_ixml_node_iterator,
+          node     TYPE REF TO if_ixml_node,
+          parent   TYPE REF TO if_ixml_node,
+
+          lt_parent TYPE TABLE OF string,
+          lv_parentname TYPE string.
+
+    FIELD-SYMBOLS: <parent> TYPE string.
+    iterator = document->create_iterator( ).
+    node = iterator->get_next( ).
+    WHILE NOT node IS INITIAL.
+*  * do something with the node
+*  ...
+
+      node = iterator->get_next( ).
+
+      IF node IS INITIAL.
+        CONTINUE.
+      ENDIF.
+      CLEAR: lv_name,
+             lv_value.
+
+      lv_name = node->get_name( ).
+      lv_value = node->get_value( ).
+
+*    Get parent
+      parent = node.
+      CLEAR: lt_parent[].
+
+      DO.
+        parent = parent->get_parent( ).
+        IF parent IS INITIAL.
+          EXIT.
+        ENDIF.
+        lv_parentname = parent->get_name( ).
+
+        APPEND INITIAL LINE TO lt_parent ASSIGNING <parent>.
+        <parent> = lv_parentname.
+      ENDDO.
+
+      CLEAR: lv_parentname.
+
+      LOOP AT lt_parent ASSIGNING <parent>.
+        IF lv_parentname IS INITIAL.
+          lv_parentname = <parent>.
+        ELSE.
+          CONCATENATE lv_parentname <parent> INTO lv_parentname SEPARATED BY '->'.
+        ENDIF.
+      ENDLOOP.
+
+      APPEND INITIAL LINE TO gt_table ASSIGNING <table>.
+
+      CONCATENATE lv_parentname lv_name lv_value INTO <table> SEPARATED BY '='.
+    ENDWHILE.
   ENDMETHOD.
 
 
@@ -477,5 +561,10 @@ ENDMETHOD.
         ENDIF.
       ENDLOOP.
     ENDLOOP.
+  ENDMETHOD.
+
+
+  METHOD set_xmlstr.
+    me->gv_xmlstr = xmlstr.
   ENDMETHOD.
 ENDCLASS.
