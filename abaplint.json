@@ -173,14 +173,7 @@
       },
       "parser_error": true,
       "preferred_compare_operator": {
-          "badOperators": [
-              "EQ",
-              "><",
-              "NE",
-              "GE",
-              "GT",
-              "LT",
-              "LE"
+          "badOperators": ["><"
           ]
       },
       "remove_descriptions": {
@@ -212,7 +205,12 @@
               "PROG",
               "CLAS",
               "INTF",
-              "DEVC"
+              "DEVC",
+              "DOMA",
+              "DTEL",
+              "TABL",
+              "TOBJ",
+              "TTYP"
           ]
       },
       "begin_end_names": true,
