@@ -95,6 +95,7 @@ Utilities for tax identification numbers.
 |TYPE| Importing|TYPE CHAR4 |TIN type (business, customer etc.)|
 |TIN_LIST| Exporting|LIKE GT_TIN|Generated TIN list (if more than one TINs are requested.)|
 |TIN| Exporting|TYPE STRING|Generated TIN (If only one TIN is requested.|
+
 Usage example
 
     DATA : lt_tin_list LIKE zotct_cl_tin=>gt_tin.  
@@ -115,6 +116,8 @@ Usage example
 |TYPE| Importing|TYPE CHAR4|TIN type (business, customer etc.)|
 |RESULT_LIST| Exporting|LIKE GT_RESULT|TIN list validation result table.|
 |VALID| Exporting|TYPE ABAP_BOOL|Validity flag. True if all given TINs are valid.|
+
+Usage example:
 
     DATA: lt_result_list LIKE zotct_cl_tin=>gt_result,  
 		  lv_valid TYPE abap_bool.  
