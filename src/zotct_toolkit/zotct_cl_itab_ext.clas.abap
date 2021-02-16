@@ -7,24 +7,24 @@ public section.
 
   class-methods SHUFFLE
     changing
-      !CT_TABLE type STANDARD TABLE .
+      !TABLE type STANDARD TABLE .
   class-methods REVERSE
     changing
-      !CT_TABLE type STANDARD TABLE .
+      !TABLE type STANDARD TABLE .
   class-methods MAX
     importing
-      !IV_COLNAME type STRING
-      !IT_TABLE type STANDARD TABLE
+      !COLNAME type STRING
+      !TABLE type STANDARD TABLE
     returning
-      value(R_VAL) type STRING .
+      value(VAL) type STRING .
   class-methods MIN
     importing
-      !IV_COLNAME type STRING
-      !IT_TABLE type STANDARD TABLE
+      !COLNAME type STRING
+      !TABLE type STANDARD TABLE
     returning
-      value(R_VAL) type STRING .
-protected section.
-private section.
+      value(VAL) type STRING .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 ENDCLASS.
 
 
@@ -39,20 +39,20 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
                    <restab>  TYPE ANY TABLE,
                    <res>     TYPE any.
 
-    DATA: l_ref TYPE REF TO data.
+    DATA: lcl_ref TYPE REF TO data.
 
-    CREATE DATA: l_ref LIKE it_table.
-    ASSIGN: l_ref->* TO <restab>,
-            iv_colname TO <colname>.
+    CREATE DATA: lcl_ref LIKE table.
+    ASSIGN: lcl_ref->* TO <restab>,
+            colname TO <colname>.
 
-    <restab> = it_table.
+    <restab> = table.
 
     SORT <restab> BY (<colname>) DESCENDING.
 
     LOOP AT <restab> ASSIGNING <res>.
       ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
       IF <value> IS ASSIGNED.
-        r_val = <value>.
+        val = <value>.
       ENDIF.
       EXIT.
     ENDLOOP.
@@ -66,20 +66,20 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
                    <restab>  TYPE ANY TABLE,
                    <res>     TYPE any.
 
-    DATA: l_ref TYPE REF TO data.
+    DATA: lcl_ref TYPE REF TO data.
 
-    CREATE DATA: l_ref LIKE it_table.
-    ASSIGN: l_ref->* TO <restab>,
-            iv_colname TO <colname>.
+    CREATE DATA: lcl_ref LIKE table.
+    ASSIGN: lcl_ref->* TO <restab>,
+            colname TO <colname>.
 
-    <restab> = it_table.
+    <restab> = table.
 
     SORT <restab> BY (<colname>) ASCENDING.
 
     LOOP AT <restab> ASSIGNING <res>.
       ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
       IF <value> IS ASSIGNED.
-        r_val = <value>.
+        val = <value>.
       ENDIF.
       EXIT.
     ENDLOOP.
@@ -87,8 +87,6 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
 
   METHOD reverse.
-*** INSERT field to the internal table
-
     DATA: l_datadescr   TYPE REF TO cl_abap_datadescr,
           l_comp_tab    TYPE cl_abap_structdescr=>component_table,
           l_comp        TYPE cl_abap_structdescr=>component,
@@ -106,10 +104,9 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
                    <f_target_struct2> TYPE any,
                    <f_field>          TYPE any.
 
-    CREATE DATA: l_ref LIKE ct_table.
+    CREATE DATA: l_ref LIKE table.
 
     ASSIGN l_ref->* TO <f_target_tab>.
-
 
     lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
     l_datadescr = lo_new_tab->get_table_line_type( ).
@@ -141,9 +138,9 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
     CLEAR lv_lines.
 
-    DESCRIBE TABLE ct_table LINES lv_lines.
+    DESCRIBE TABLE table LINES lv_lines.
 
-    LOOP AT ct_table ASSIGNING <f_target_struct>.
+    LOOP AT table ASSIGNING <f_target_struct>.
       ASSIGN COMPONENT 'SEQNR' OF STRUCTURE <f_target_struct2> TO <f_field>.
 
       MOVE-CORRESPONDING <f_target_struct> TO <f_target_struct2>.
@@ -158,10 +155,10 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
     SORT <f_target_tab> BY ('SEQNR') DESCENDING.
 
-    CLEAR ct_table[].
+    CLEAR table[].
 
     LOOP AT <f_target_tab> ASSIGNING <f_target_struct2>.
-      APPEND INITIAL LINE TO ct_table ASSIGNING <f_target_struct>.
+      APPEND INITIAL LINE TO table ASSIGNING <f_target_struct>.
       MOVE-CORRESPONDING <f_target_struct2> TO <f_target_struct>.
     ENDLOOP.
   ENDMETHOD.
@@ -188,7 +185,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
                     <f_target_struct2> TYPE any,
                     <f_field>          TYPE any.
 
-    CREATE DATA: l_ref LIKE ct_table.
+    CREATE DATA: l_ref LIKE table.
 
     ASSIGN l_ref->* TO <f_target_tab>.
 
@@ -222,9 +219,9 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
     CLEAR lv_lines.
 
-    DESCRIBE TABLE ct_table LINES lv_lines.
+    DESCRIBE TABLE table LINES lv_lines.
 
-    LOOP AT ct_table ASSIGNING <f_target_struct>.
+    LOOP AT table ASSIGNING <f_target_struct>.
       ASSIGN COMPONENT 'SEQNR' OF STRUCTURE <f_target_struct2> TO <f_field>.
 
       MOVE-CORRESPONDING <f_target_struct> TO <f_target_struct2>.
@@ -252,10 +249,10 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
     SORT <f_target_tab> BY ('SEQNR') ASCENDING.
 
-    CLEAR ct_table[].
+    CLEAR table[].
 
     LOOP AT <f_target_tab> ASSIGNING <f_target_struct2>.
-      APPEND INITIAL LINE TO ct_table ASSIGNING <f_target_struct>.
+      APPEND INITIAL LINE TO table ASSIGNING <f_target_struct>.
       MOVE-CORRESPONDING <f_target_struct2> TO <f_target_struct>.
     ENDLOOP.
 

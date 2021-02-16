@@ -60,16 +60,16 @@ protected section.
   methods CREATE_NODEMAP .
   methods GET_PREFIX
     importing
-      !IV_XMLKEY type STRING
+      !XMLKEY type STRING
     returning
-      value(RV_PREFIX) type STRING .
+      value(PREFIX) type STRING .
 private section.
 
   methods GENERATE_NODES
     importing
-      !IV_XMLKEY type STRING
+      !XMLKEY type STRING
     returning
-      value(RT_NODES) type STRINGTAB .
+      value(NODES) type STRINGTAB .
 ENDCLASS.
 
 
@@ -122,7 +122,7 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
                    <collection> TYPE string.
 
     LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
-      lt_return = me->generate_nodes( iv_xmlkey = <nodemap>-node ).
+      lt_return = me->generate_nodes( xmlkey = <nodemap>-node ).
 
       LOOP AT lt_return ASSIGNING <return>.
         ls_collection = <return>.
@@ -296,7 +296,7 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
     FIELD-SYMBOLS: <split> TYPE string,
                    <nodes> TYPE string.
 
-    SPLIT iv_xmlkey AT '->' INTO TABLE lt_split.
+    SPLIT xmlkey AT '->' INTO TABLE lt_split.
 
     LOOP AT lt_split ASSIGNING <split>.
       IF lv_string IS INITIAL.
@@ -305,7 +305,7 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
         CONCATENATE lv_string <split> INTO lv_string SEPARATED BY '->'.
       ENDIF.
 
-      APPEND INITIAL LINE TO rt_nodes ASSIGNING <nodes>.
+      APPEND INITIAL LINE TO nodes ASSIGNING <nodes>.
       <nodes> = lv_string.
     ENDLOOP.
   ENDMETHOD.
@@ -386,10 +386,10 @@ METHOD nest.
 
   CALL METHOD zotct_cl_itab_ext=>max
     EXPORTING
-      iv_colname = 'SEQNR'
-      it_table   = gt_flattab
+      colname = 'SEQNR'
+      table   = gt_flattab
     RECEIVING
-      r_val      = lv_seqnr_max.
+      val      = lv_seqnr_max.
 
   DO lv_seqnr_max TIMES.
     lv_seqnr = lv_seqnr + 1.
@@ -417,7 +417,7 @@ METHOD nest.
   LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
 
     CLEAR: lv_prefix.
-    lv_prefix = me->get_prefix( iv_xmlkey = <nodemap>-xmlkey ).
+    lv_prefix = me->get_prefix( xmlkey = <nodemap>-xmlkey ).
 
     <nodemap>-obj = me->gcl_document->create_simple_element_ns( name = <nodemap>-xmlkey
                                                                 parent = me->gcl_document
@@ -427,7 +427,7 @@ METHOD nest.
                                                    AND parent EQ <nodemap>-id.
 
       CLEAR: lv_prefix.
-      lv_prefix = me->get_prefix( iv_xmlkey = <flattab>-xmlkey ).
+      lv_prefix = me->get_prefix( xmlkey = <flattab>-xmlkey ).
 
       <flattab>-obj = me->gcl_document->create_simple_element_ns( name = <flattab>-xmlkey
                                                                 value = <flattab>-xmlval
@@ -448,7 +448,7 @@ METHOD nest.
     READ TABLE me->gt_nodemap ASSIGNING <parent> WITH KEY node = <nodemap>-parentnode.
     IF sy-subrc EQ 0.
       CLEAR: lv_prefix.
-      lv_prefix = me->get_prefix( iv_xmlkey = <nodemap>-xmlkey ).
+      lv_prefix = me->get_prefix( xmlkey = <nodemap>-xmlkey ).
 
       <nodemap>-obj = me->gcl_document->create_simple_element_ns( name = <nodemap>-xmlkey
                                                                   parent = <parent>-obj
@@ -458,7 +458,7 @@ METHOD nest.
                                                    AND parent EQ <nodemap>-id.
 
         CLEAR: lv_prefix.
-        lv_prefix = me->get_prefix( iv_xmlkey = <flattab>-xmlkey ).
+        lv_prefix = me->get_prefix( xmlkey = <flattab>-xmlkey ).
 
         IF <flattab>-attrib IS INITIAL.
           <flattab>-obj = me->gcl_document->create_simple_element_ns( name = <flattab>-xmlkey
