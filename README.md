@@ -1,3 +1,4 @@
+
 Please note that this package is under active development and some functionalities may not been tested and work stable.
 
 # ZOTCT_UTILS
@@ -28,9 +29,9 @@ Extra functionality to internal tables.
  
 | Parameter| Type| Typing| Description
 |--|--|--|--|
-|COLNAME| Importing |TYPE String|The column name whose maximum value is to be returned|
-|TABLE|Importing|TYPE Standard Table|The table to be returned maximum value of one of its column|
-|VAL|Returning|TYPE String|Maximum value of the given table's column|
+|COLNAME| Importing |TYPE String|The column name whose maximum value is to be returned.|
+|TABLE|Importing|TYPE Standard Table|The table to be returned maximum value of one of its column.|
+|VAL|Returning|TYPE String|Maximum value of the given table's column.|
 
 Usage example
 
@@ -47,9 +48,9 @@ Usage example
  
 | Parameter| Type| Typing| Description
 |--|--|--|--|
-|COLNAME| Importing |TYPE String|The column name whose minimum value is to be returned|
-|TABLE|Importing|TYPE Standard Table|The table to be returned minimum value of one of its column|
-|VAL|Returning|TYPE String|Minimum value of the given table's column|
+|COLNAME| Importing |TYPE String|The column name whose minimum value is to be returned.|
+|TABLE|Importing|TYPE Standard Table|The table to be returned minimum value of one of its column.|
+|VAL|Returning|TYPE String|Minimum value of the given table's column.|
 
 Usage example
 
@@ -65,7 +66,7 @@ Usage example
  **- REVERSE():** Reverses the order of items of the given internal table.
 | Parameter| Type| Typing| Description
 |--|--|--|--|
-|TABLE| Changing|TYPE Standard Table|Internal table to be reversed|
+|TABLE| Changing|TYPE Standard Table|Internal table to be reversed.|
 
 Usage example
 
@@ -76,10 +77,53 @@ Usage example
  **- SHUFFLE():** Change the order of items of the given internal table randomly.
 | Parameter| Type| Typing| Description
 |--|--|--|--|
-|TABLE| Changing|TYPE Standard Table|Internal table to be shuffled|
+|TABLE| Changing|TYPE Standard Table|Internal table to be shuffled.|
 
 Usage example
 
     CALL METHOD zotct_cl_itab_ext=>reverse
       CHANGING
         table = lt_table .
+## ZOTCT_CL_TIN
+Utilities for tax identification numbers.
+**Methods:**
+ **- CREATE_DUMMY_TIN():** Returns a valid dummy tax identification number based on given locale and count.
+ | Parameter| Type| Typing| Description
+|--|--|--|--|
+|LOCALE| Importing|TYPE LAND1|Locale of Tax Identification Number.|
+|COUNT| Importing|TYPE SYTABIX|Number of TINs to be generated.|
+|TYPE| Importing|TYPE CHAR4 |TIN type (business, customer etc.)|
+|TIN_LIST| Exporting|LIKE GT_TIN|Generated TIN list (if more than one TINs are requested.)|
+|TIN| Exporting|TYPE STRING|Generated TIN (If only one TIN is requested.|
+Usage example
+
+    DATA : lt_tin_list LIKE zotct_cl_tin=>gt_tin.  
+  
+	CALL METHOD zotct_cl_tin=>create_dummy_tin  
+		EXPORTING  
+			locale = 'TR'  
+			count = 12  
+			type = 'TCKN'  
+		IMPORTING  
+			tin_list = lt_tin_list. 
+ **- VALIDATE_TIN():** Validates given TIN(s) based on locale.
+ | Parameter| Type| Typing| Description
+|--|--|--|--|
+|LOCALE| Importing|TYPE LAND1|Locale of Tax Identification Number.|
+|TIN_LIST| Importing|LIKE GT_TIN|TIN List to be validated.|
+|TIN| Importing|TYPE String |Single TIN to be validated.|
+|TYPE| Importing|TYPE CHAR4|TIN type (business, customer etc.)|
+|RESULT_LIST| Exporting|LIKE GT_RESULT|TIN list validation result table.|
+|VALID| Exporting|TYPE ABAP_BOOL|Validity flag. True if all given TINs are valid.|
+
+    DATA: lt_result_list LIKE zotct_cl_tin=>gt_result,  
+		  lv_valid TYPE abap_bool.  
+	  
+	CALL METHOD zotct_cl_tin=>validate_tin  
+		EXPORTING  
+			locale = 'TR'  
+			tin_list = lt_tin_list  
+			type = 'TCKN'  
+		IMPORTING  
+			result_list = lt_result_list  
+			valid = lv_valid.
