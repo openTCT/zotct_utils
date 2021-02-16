@@ -317,68 +317,68 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
                    <flattab>  TYPE zotct_s0001,
                    <sproxdat> LIKE LINE OF me->gt_sproxdat.
 
-    READ TABLE me->gt_tadir_v WITH KEY ifr_name = iv_xmlkey ASSIGNING <tadir_v>.
+    READ TABLE me->gt_tadir_v WITH KEY ifr_name = xmlkey ASSIGNING <tadir_v>.
     IF sy-subrc EQ 0.
-      rv_prefix = <tadir_v>-ifr_nspce.
+      prefix = <tadir_v>-ifr_nspce.
     ELSE.
       CLEAR: lv_ifrname.
-      CONCATENATE iv_xmlkey 'Type' INTO lv_ifrname.
+      CONCATENATE xmlkey 'Type' INTO lv_ifrname.
       READ TABLE me->gt_tadir_v WITH KEY ifr_name = lv_ifrname ASSIGNING <tadir_v>.
       IF sy-subrc EQ 0.
-        rv_prefix = <tadir_v>-ifr_nspce.
+        prefix = <tadir_v>-ifr_nspce.
       ELSE.
-        READ TABLE me->gt_flattab WITH KEY xmlkey = iv_xmlkey ASSIGNING <flattab>.
+        READ TABLE me->gt_flattab WITH KEY xmlkey = xmlkey ASSIGNING <flattab>.
         IF sy-subrc EQ 0.
           lv_ifrname = <flattab>-abap_name.
         ENDIF.
 
         READ TABLE me->gt_tadir_v WITH KEY obj_name = lv_ifrname ASSIGNING <tadir_v>.
         IF sy-subrc EQ 0.
-          rv_prefix = <tadir_v>-ifr_nspce.
+          prefix = <tadir_v>-ifr_nspce.
         ENDIF.
       ENDIF.
     ENDIF.
 
-    IF iv_xmlkey EQ 'ActualPackage'.
-      READ TABLE me->gt_sproxdat WITH KEY ifr_name = iv_xmlkey ASSIGNING <sproxdat>.
+    IF xmlkey EQ 'ActualPackage'.
+      READ TABLE me->gt_sproxdat WITH KEY ifr_name = xmlkey ASSIGNING <sproxdat>.
       IF sy-subrc EQ 0.
         lv_ifrname = <sproxdat>-obj_name.
       ENDIF.
       READ TABLE me->gt_tadir_v WITH KEY obj_name = lv_ifrname ASSIGNING <tadir_v>.
       IF sy-subrc EQ 0.
-        rv_prefix = <tadir_v>-ifr_nspce.
+        prefix = <tadir_v>-ifr_nspce.
       ENDIF.
     ENDIF.
 
-    CASE rv_prefix.
+    CASE prefix.
       WHEN gc_xmlns.
-        rv_prefix = 'xmlns'.
+        prefix = 'xmlns'.
       WHEN gc_cac.
-        rv_prefix = 'cac'.
+        prefix = 'cac'.
       WHEN gc_xades.
-        rv_prefix = 'xades'.
+        prefix = 'xades'.
       WHEN gc_udt.
-        rv_prefix = 'udt'.
+        prefix = 'udt'.
       WHEN gc_cbc.
-        rv_prefix = 'cbc'.
+        prefix = 'cbc'.
       WHEN gc_ccts.
-        rv_prefix = 'ccts'.
+        prefix = 'ccts'.
       WHEN gc_ubltr.
-        rv_prefix = 'ubltr'.
+        prefix = 'ubltr'.
       WHEN gc_qdt.
-        rv_prefix = 'qdt'.
+        prefix = 'qdt'.
       WHEN gc_ext.
-        rv_prefix = 'ext'.
+        prefix = 'ext'.
       WHEN gc_ds.
-        rv_prefix = 'ds'.
+        prefix = 'ds'.
       WHEN gc_xsi.
-        rv_prefix = 'xsi'.
+        prefix = 'xsi'.
       WHEN gc_schemalocation.
-        rv_prefix = 'schemaLocation'.
+        prefix = 'schemaLocation'.
       WHEN gc_ns8.
-        rv_prefix = 'ns8'.
+        prefix = 'ns8'.
       WHEN gc_docname.
-        rv_prefix = 'docname'.
+        prefix = 'docname'.
     ENDCASE.
   ENDMETHOD.
 

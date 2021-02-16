@@ -13,7 +13,7 @@ public section.
       !PRODUCT type ZOTCT_DE0002 .
   methods GET_UBL
     returning
-      value(MO_UBL) type ref to OBJECT .
+      value(UBL) type ref to OBJECT .
 protected section.
 private section.
 
@@ -50,6 +50,6 @@ CLASS ZOTCT_UBL_F IMPLEMENTATION.
 
 
   METHOD get_ubl.
-    mo_ubl = me->mo_ubl.
+    ubl = me->mo_ubl.
   ENDMETHOD.
 ENDCLASS.

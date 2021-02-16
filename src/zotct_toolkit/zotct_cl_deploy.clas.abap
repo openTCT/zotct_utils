@@ -1,15 +1,15 @@
-class ZOTCT_CL_DEPLOY definition
-  public
-  final
-  create public .
+CLASS zotct_cl_deploy DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  class-methods REQ_UPLOAD .
-  class-methods REQ_DOWNLOAD .
-  class-methods DELETE_PACKAGE .
-protected section.
-private section.
+    CLASS-METHODS req_upload .
+    CLASS-METHODS req_download .
+    CLASS-METHODS delete_package .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 ENDCLASS.
 
 
@@ -17,14 +17,14 @@ ENDCLASS.
 CLASS ZOTCT_CL_DEPLOY IMPLEMENTATION.
 
 
-  method DELETE_PACKAGE.
-  endmethod.
+  METHOD delete_package.
+  ENDMETHOD.
 
 
-  method REQ_DOWNLOAD.
-  endmethod.
+  METHOD req_download.
+  ENDMETHOD.
 
 
-  method REQ_UPLOAD.
-  endmethod.
+  METHOD req_upload.
+  ENDMETHOD.
 ENDCLASS.
