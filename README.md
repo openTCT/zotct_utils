@@ -35,6 +35,7 @@ Extra functionality to internal tables.
 
 Usage example
 
+```abap
     DATA: lv_seqnr_max TYPE string.
     
     CALL METHOD zotct_cl_itab_ext=>max  
@@ -43,6 +44,7 @@ Usage example
         table = gt_flattab  
       RECEIVING  
         val = lv_seqnr_max.
+```	
 
  **- MIN():** Returns minimum value of the given column of table.
  
@@ -54,6 +56,7 @@ Usage example
 
 Usage example
 
+```abap
     DATA: lv_min_amount TYPE string.
     
     CALL METHOD zotct_cl_itab_ext=>min  
@@ -62,6 +65,7 @@ Usage example
         table = lt_bseg  
       RECEIVING  
         val = lv_min_amount.
+```
 
  **- REVERSE():** Reverses the order of items of the given internal table.
 | Parameter| Type| Typing| Description
@@ -70,9 +74,11 @@ Usage example
 
 Usage example
 
+```abap
     CALL METHOD zotct_cl_itab_ext=>reverse
       CHANGING
         table = lt_table .
+```
 
  **- SHUFFLE():** Change the order of items of the given internal table randomly.
 | Parameter| Type| Typing| Description
@@ -81,9 +87,12 @@ Usage example
 
 Usage example
 
+```abap
     CALL METHOD zotct_cl_itab_ext=>reverse
       CHANGING
         table = lt_table .
+```
+
 ## ZOTCT_CL_TIN
 Utilities for tax identification numbers.
 **Methods:**
@@ -98,6 +107,7 @@ Utilities for tax identification numbers.
 
 Usage example
 
+```abap
     DATA : lt_tin_list LIKE zotct_cl_tin=>gt_tin.  
   
 	CALL METHOD zotct_cl_tin=>create_dummy_tin  
@@ -107,6 +117,8 @@ Usage example
 			type = 'TCKN'  
 		IMPORTING  
 			tin_list = lt_tin_list. 
+```
+
  **- VALIDATE_TIN():** Validates given TIN(s) based on locale.
  | Parameter| Type| Typing| Description
 |--|--|--|--|
@@ -119,6 +131,7 @@ Usage example
 
 Usage example:
 
+```abap
     DATA: lt_result_list LIKE zotct_cl_tin=>gt_result,  
 		  lv_valid TYPE abap_bool.  
 	  
@@ -130,3 +143,4 @@ Usage example:
 		IMPORTING  
 			result_list = lt_result_list  
 			valid = lv_valid.
+```
