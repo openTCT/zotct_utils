@@ -36,14 +36,14 @@ Extra functionality to internal tables.
 Usage example
 
 ```abap
-    DATA: lv_seqnr_max TYPE string.
+DATA: lv_seqnr_max TYPE string.
     
-    CALL METHOD zotct_cl_itab_ext=>max  
-      EXPORTING  
-        colname = 'SEQNR'  
-        table = gt_flattab  
-      RECEIVING  
-        val = lv_seqnr_max.
+CALL METHOD zotct_cl_itab_ext=>max  
+  EXPORTING  
+    colname = 'SEQNR'  
+    table = gt_flattab  
+  RECEIVING  
+    val = lv_seqnr_max.
 ```	
 
  **- MIN():** Returns minimum value of the given column of table.
@@ -57,14 +57,14 @@ Usage example
 Usage example
 
 ```abap
-    DATA: lv_min_amount TYPE string.
+DATA: lv_min_amount TYPE string.
     
-    CALL METHOD zotct_cl_itab_ext=>min  
-      EXPORTING  
-        colname = 'WRBTR'  
-        table = lt_bseg  
-      RECEIVING  
-        val = lv_min_amount.
+CALL METHOD zotct_cl_itab_ext=>min  
+  EXPORTING  
+    colname = 'WRBTR'  
+    table = lt_bseg  
+  RECEIVING  
+    val = lv_min_amount.
 ```
 
  **- REVERSE():** Reverses the order of items of the given internal table.
@@ -75,9 +75,9 @@ Usage example
 Usage example
 
 ```abap
-    CALL METHOD zotct_cl_itab_ext=>reverse
-      CHANGING
-        table = lt_table .
+CALL METHOD zotct_cl_itab_ext=>reverse
+  CHANGING
+    table = lt_table .
 ```
 
  **- SHUFFLE():** Change the order of items of the given internal table randomly.
@@ -88,9 +88,9 @@ Usage example
 Usage example
 
 ```abap
-    CALL METHOD zotct_cl_itab_ext=>reverse
-      CHANGING
-        table = lt_table .
+CALL METHOD zotct_cl_itab_ext=>reverse
+  CHANGING
+    table = lt_table .
 ```
 
 ## ZOTCT_CL_TIN
@@ -108,15 +108,15 @@ Utilities for tax identification numbers.
 Usage example
 
 ```abap
-    DATA : lt_tin_list LIKE zotct_cl_tin=>gt_tin.  
+DATA : lt_tin_list LIKE zotct_cl_tin=>gt_tin.  
   
-	CALL METHOD zotct_cl_tin=>create_dummy_tin  
-		EXPORTING  
-			locale = 'TR'  
-			count = 12  
-			type = 'TCKN'  
-		IMPORTING  
-			tin_list = lt_tin_list. 
+CALL METHOD zotct_cl_tin=>create_dummy_tin  
+  EXPORTING  
+    locale = 'TR'  
+    count = 12  
+    type = 'TCKN'  
+  IMPORTING  
+    tin_list = lt_tin_list. 
 ```
 
  **- VALIDATE_TIN():** Validates given TIN(s) based on locale.
@@ -132,15 +132,15 @@ Usage example
 Usage example:
 
 ```abap
-    DATA: lt_result_list LIKE zotct_cl_tin=>gt_result,  
-		  lv_valid TYPE abap_bool.  
+DATA: lt_result_list LIKE zotct_cl_tin=>gt_result,  
+      lv_valid TYPE abap_bool.  
 	  
-	CALL METHOD zotct_cl_tin=>validate_tin  
-		EXPORTING  
-			locale = 'TR'  
-			tin_list = lt_tin_list  
-			type = 'TCKN'  
-		IMPORTING  
-			result_list = lt_result_list  
-			valid = lv_valid.
+CALL METHOD zotct_cl_tin=>validate_tin  
+  EXPORTING  
+    locale = 'TR'  
+    tin_list = lt_tin_list  
+    type = 'TCKN'  
+  IMPORTING  
+    result_list = lt_result_list  
+    valid = lv_valid.
 ```
