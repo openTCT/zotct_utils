@@ -206,18 +206,24 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
   METHOD flatten.
 
+    TYPES: BEGIN OF ty_table,
+           parent TYPE string,
+           name TYPE string,
+           value TYPE string,
+           END OF ty_table.
+
     DATA: ixml           TYPE REF TO if_ixml,
           stream_factory TYPE REF TO if_ixml_stream_factory,
           istream        TYPE REF TO if_ixml_istream,
           document       TYPE REF TO if_ixml_document,
           parser         TYPE REF TO if_ixml_parser,
 
-          gt_table       TYPE TABLE OF string,
+          gt_table       TYPE STANDARD TABLE OF ty_table,
 
           lv_name        TYPE string,
           lv_value       TYPE string.
 
-    FIELD-SYMBOLS: <table> TYPE string.
+    FIELD-SYMBOLS: <table> TYPE ty_table.
 
     ixml = cl_ixml=>create( ).
     stream_factory = ixml->create_stream_factory( ).
@@ -236,7 +242,7 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
           node     TYPE REF TO if_ixml_node,
           parent   TYPE REF TO if_ixml_node,
 
-          lt_parent TYPE TABLE OF string,
+          lt_parent TYPE STANDARD TABLE OF string,
           lv_parentname TYPE string.
 
     FIELD-SYMBOLS: <parent> TYPE string.
@@ -268,9 +274,19 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
         ENDIF.
         lv_parentname = parent->get_name( ).
 
-        APPEND INITIAL LINE TO lt_parent ASSIGNING <parent>.
+*        APPEND INITIAL LINE TO lt_parent ASSIGNING <parent> .
+
+        INSERT INITIAL LINE INTO lt_parent ASSIGNING <parent> INDEX 1.
         <parent> = lv_parentname.
       ENDDO.
+*      IF lt_parent[] IS NOT INITIAL.
+*        CALL METHOD zotct_cl_itab_ext=>reverse
+*        CHANGING
+*          table  = lt_parent
+*          .
+*      ENDIF.
+
+
 
       CLEAR: lv_parentname.
 
@@ -282,9 +298,18 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
         ENDIF.
       ENDLOOP.
 
+      IF lv_name(1) NE '#'.
+        CONTINUE.
+      ENDIF.
+
       APPEND INITIAL LINE TO gt_table ASSIGNING <table>.
 
-      CONCATENATE lv_parentname lv_name lv_value INTO <table> SEPARATED BY '='.
+*      CONCATENATE lv_parentname lv_name lv_value INTO <table> SEPARATED BY '='.
+
+      <table>-parent = lv_parentname.
+      <table>-name   = lv_name.
+      <table>-value  = lv_value.
+
     ENDWHILE.
   ENDMETHOD.
 
