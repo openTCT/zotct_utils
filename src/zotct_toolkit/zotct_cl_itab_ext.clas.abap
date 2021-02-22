@@ -108,10 +108,14 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
     ASSIGN l_ref->* TO <f_target_tab>.
 
-    lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
-    l_datadescr = lo_new_tab->get_table_line_type( ).
+    TRY .
+      lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
+      l_datadescr = lo_new_tab->get_table_line_type( ).
+      l_structure ?= l_datadescr.
+    CATCH cx_root.
+      EXIT.
+    ENDTRY.
 
-    l_structure ?= l_datadescr.
     l_comp_tab = l_structure->get_components( ).
 
     l_comp-name = 'SEQNR'.
@@ -190,10 +194,13 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     ASSIGN l_ref->* TO <f_target_tab>.
 
 
-    lo_new_tab ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
-    l_datadescr = lo_new_tab->get_table_line_type( ).
-
-    l_structure ?= l_datadescr.
+    TRY .
+      lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
+      l_datadescr = lo_new_tab->get_table_line_type( ).
+      l_structure ?= l_datadescr.
+    CATCH cx_root.
+      EXIT.
+    ENDTRY.
     l_comp_tab = l_structure->get_components( ).
 
     l_comp-name = 'SEQNR'.
