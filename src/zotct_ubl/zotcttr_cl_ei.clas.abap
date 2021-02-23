@@ -1,12 +1,12 @@
-class ZOTCTTR_CL_EI definition
-  public
-  inheriting from ZOTCT_CL_UBL
-  final
-  create public .
+CLASS zotcttr_cl_ei DEFINITION
+  PUBLIC
+  INHERITING FROM zotct_cl_ubl
+  FINAL
+  CREATE PUBLIC .
 
-public section.
-protected section.
-private section.
+  PUBLIC SECTION.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 ENDCLASS.
 
 

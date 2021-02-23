@@ -1,28 +1,28 @@
-class ZOTCT_CL_ITAB_EXT definition
-  public
-  final
-  create public .
+CLASS zotct_cl_itab_ext DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  class-methods SHUFFLE
-    changing
-      !TABLE type STANDARD TABLE .
-  class-methods REVERSE
-    changing
-      !TABLE type STANDARD TABLE .
-  class-methods MAX
-    importing
-      !COLNAME type STRING
-      !TABLE type STANDARD TABLE
-    returning
-      value(VAL) type STRING .
-  class-methods MIN
-    importing
-      !COLNAME type STRING
-      !TABLE type STANDARD TABLE
-    returning
-      value(VAL) type STRING .
+    CLASS-METHODS shuffle
+      CHANGING
+        !table TYPE STANDARD TABLE .
+    CLASS-METHODS reverse
+      CHANGING
+        !table TYPE STANDARD TABLE .
+    CLASS-METHODS max
+      IMPORTING
+        !colname   TYPE string
+        !table     TYPE STANDARD TABLE
+      RETURNING
+        VALUE(val) TYPE string .
+    CLASS-METHODS min
+      IMPORTING
+        !colname   TYPE string
+        !table     TYPE STANDARD TABLE
+      RETURNING
+        VALUE(val) TYPE string .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
@@ -109,17 +109,16 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     ASSIGN l_ref->* TO <f_target_tab>.
 
     TRY .
-      lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
-      l_datadescr = lo_new_tab->get_table_line_type( ).
-      l_structure ?= l_datadescr.
-    CATCH cx_root.
-      EXIT.
+        lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
+        l_datadescr = lo_new_tab->get_table_line_type( ).
+        l_structure ?= l_datadescr.
+      CATCH cx_root.
+        EXIT.
     ENDTRY.
 
     l_comp_tab = l_structure->get_components( ).
 
     l_comp-name = 'SEQNR'.
-*    l_comp-type = cl_abap_elemdescr=>get_c( p_length = '10' ).
     l_comp-type = cl_abap_elemdescr=>get_int8( ).
     APPEND l_comp TO l_comp_tab. CLEAR l_comp.
 
@@ -195,11 +194,11 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
 
     TRY .
-      lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
-      l_datadescr = lo_new_tab->get_table_line_type( ).
-      l_structure ?= l_datadescr.
-    CATCH cx_root.
-      EXIT.
+        lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
+        l_datadescr = lo_new_tab->get_table_line_type( ).
+        l_structure ?= l_datadescr.
+      CATCH cx_root.
+        EXIT.
     ENDTRY.
     l_comp_tab = l_structure->get_components( ).
 

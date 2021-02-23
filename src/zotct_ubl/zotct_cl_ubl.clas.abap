@@ -1,75 +1,75 @@
-class ZOTCT_CL_UBL definition
-  public
-  create public .
+CLASS zotct_cl_ubl DEFINITION
+  PUBLIC
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  methods NEST .
-  methods SET_NODE
-    importing
-      !UBLTAB type ZOTCT_TT0002 .
-  methods GET_NODE .
-  methods GET_XMLSTR
-    returning
-      value(XMLSTR) type STRINGVAL .
-  methods SET_XMLSTR
-    importing
-      !XMLSTR type STRINGVAL .
-  methods FLATTEN .
-protected section.
+    METHODS nest .
+    METHODS set_node
+      IMPORTING
+        !ubltab TYPE zotct_tt0002 .
+    METHODS get_node .
+    METHODS get_xmlstr
+      RETURNING
+        VALUE(xmlstr) TYPE stringval .
+    METHODS set_xmlstr
+      IMPORTING
+        !xmlstr TYPE stringval .
+    METHODS flatten .
+  PROTECTED SECTION.
 
-  types:
-    BEGIN OF ty_data ,
-      data      TYPE REF TO data,
-      xml_name  TYPE prx_ifrnam,
-      abap_name TYPE prx_r3name,
-      r3_name   TYPE prx_r3name,
-      r3_objtyp TYPE prx_r3obj,
-    END OF ty_data .
-  types:
-    BEGIN OF ty_nodemap,
-           node TYPE string,
-           id   TYPE string,
-           obj  TYPE REF TO if_ixml_element,
-           xmlkey TYPE string,
-           parentnode TYPE string,
-           r3_seqnum TYPE prx_seqnum,
-           nestcnt   TYPE syindex,
-         END OF ty_nodemap .
+    TYPES:
+      BEGIN OF ty_data ,
+        data      TYPE REF TO data,
+        xml_name  TYPE prx_ifrnam,
+        abap_name TYPE prx_r3name,
+        r3_name   TYPE prx_r3name,
+        r3_objtyp TYPE prx_r3obj,
+      END OF ty_data .
+    TYPES:
+      BEGIN OF ty_nodemap,
+        node       TYPE string,
+        id         TYPE string,
+        obj        TYPE REF TO if_ixml_element,
+        xmlkey     TYPE string,
+        parentnode TYPE string,
+        r3_seqnum  TYPE prx_seqnum,
+        nestcnt    TYPE syindex,
+      END OF ty_nodemap .
 
-  data:
-    gt_t0001   TYPE TABLE OF zotct_t0001 .
-  data:
-    gt_sproxdat TYPE TABLE OF sproxdat .
-  data:
-    gt_tadir_v TYPE TABLE OF sproxhdr_tadir_v .
-  data:
-    gt_ttyp TYPE TABLE OF ty_data .
-  data:
-    gt_tabl TYPE TABLE OF ty_data .
-  data:
-    gt_nodemap TYPE TABLE OF ty_nodemap .
-  data GV_XMLSTR type STRINGVAL .
-  data GS_UBL type ref to DATA .
-  data GT_FLATTAB type ZOTCT_TT0001 .
-  data GCL_DOCUMENT type ref to IF_IXML_DOCUMENT .
-  data GCL_ROOT type ref to IF_IXML_ELEMENT .
-  data GCL_IXML type ref to IF_IXML .
+    DATA:
+      gt_t0001   TYPE TABLE OF zotct_t0001 .
+    DATA:
+      gt_sproxdat TYPE TABLE OF sproxdat .
+    DATA:
+      gt_tadir_v TYPE TABLE OF sproxhdr_tadir_v .
+    DATA:
+      gt_ttyp TYPE TABLE OF ty_data .
+    DATA:
+      gt_tabl TYPE TABLE OF ty_data .
+    DATA:
+      gt_nodemap TYPE TABLE OF ty_nodemap .
+    DATA gv_xmlstr TYPE stringval .
+    DATA gs_ubl TYPE REF TO data .
+    DATA gt_flattab TYPE zotct_tt0001 .
+    DATA gcl_document TYPE REF TO if_ixml_document .
+    DATA gcl_root TYPE REF TO if_ixml_element .
+    DATA gcl_ixml TYPE REF TO if_ixml .
 
-  methods SET_NAMESPACES .
-  methods CREATE_NODEMAP .
-  methods GET_PREFIX
-    importing
-      !XMLKEY type STRING
-    returning
-      value(PREFIX) type STRING .
-private section.
+    METHODS set_namespaces .
+    METHODS create_nodemap .
+    METHODS get_prefix
+      IMPORTING
+        !xmlkey       TYPE string
+      RETURNING
+        VALUE(prefix) TYPE string .
+  PRIVATE SECTION.
 
-  methods GENERATE_NODES
-    importing
-      !XMLKEY type STRING
-    returning
-      value(NODES) type STRINGTAB .
+    METHODS generate_nodes
+      IMPORTING
+        !xmlkey      TYPE string
+      RETURNING
+        VALUE(nodes) TYPE stringtab .
 ENDCLASS.
 
 
@@ -77,7 +77,7 @@ ENDCLASS.
 CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
 
-  METHOD CREATE_NODEMAP.
+  METHOD create_nodemap.
     FIELD-SYMBOLS: <nodemap>  LIKE LINE OF me->gt_nodemap,
                    <flattab>  LIKE LINE OF me->gt_flattab,
                    <split>    TYPE string,
@@ -86,7 +86,7 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
     DATA: lv_nodestr TYPE string,
           lv_counter TYPE p,
           lt_split   TYPE TABLE OF string,
-          lv_lines TYPE p,
+          lv_lines   TYPE p,
           lv_nestcnt TYPE syindex.
 
     CLEAR: lv_nodestr.
@@ -116,9 +116,9 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
     DATA: lt_collection TYPE TABLE OF string,
           ls_collection TYPE string,
-          lt_return TYPE TABLE OF string.
+          lt_return     TYPE TABLE OF string.
 
-    FIELD-SYMBOLS: <return> TYPE string,
+    FIELD-SYMBOLS: <return>     TYPE string,
                    <collection> TYPE string.
 
     LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
@@ -192,12 +192,6 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
     DELETE ADJACENT DUPLICATES FROM me->gt_nodemap COMPARING node.
 
-*    SORT me->gt_nodemap BY node ASCENDING
-*                           r3_seqnum ASCENDING.
-
-*    SORT me->gt_nodemap BY r3_seqnum ASCENDING
-*                           id ASCENDING.
-
     SORT me->gt_nodemap BY nestcnt ASCENDING
                            r3_seqnum ASCENDING.
 
@@ -207,9 +201,9 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
   METHOD flatten.
 
     TYPES: BEGIN OF ty_table,
-           parent TYPE string,
-           name TYPE string,
-           value TYPE string,
+             parent TYPE string,
+             name   TYPE string,
+             value  TYPE string,
            END OF ty_table.
 
     DATA: ixml           TYPE REF TO if_ixml,
@@ -238,20 +232,17 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
     parser->parse( ).
 
-    DATA: iterator TYPE REF TO if_ixml_node_iterator,
-          node     TYPE REF TO if_ixml_node,
-          parent   TYPE REF TO if_ixml_node,
+    DATA: iterator      TYPE REF TO if_ixml_node_iterator,
+          node          TYPE REF TO if_ixml_node,
+          parent        TYPE REF TO if_ixml_node,
 
-          lt_parent TYPE STANDARD TABLE OF string,
+          lt_parent     TYPE STANDARD TABLE OF string,
           lv_parentname TYPE string.
 
     FIELD-SYMBOLS: <parent> TYPE string.
     iterator = document->create_iterator( ).
     node = iterator->get_next( ).
     WHILE NOT node IS INITIAL.
-*  * do something with the node
-*  ...
-
       node = iterator->get_next( ).
 
       IF node IS INITIAL.
@@ -274,19 +265,10 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
         ENDIF.
         lv_parentname = parent->get_name( ).
 
-*        APPEND INITIAL LINE TO lt_parent ASSIGNING <parent> .
 
         INSERT INITIAL LINE INTO lt_parent ASSIGNING <parent> INDEX 1.
         <parent> = lv_parentname.
       ENDDO.
-*      IF lt_parent[] IS NOT INITIAL.
-*        CALL METHOD zotct_cl_itab_ext=>reverse
-*        CHANGING
-*          table  = lt_parent
-*          .
-*      ENDIF.
-
-
 
       CLEAR: lv_parentname.
 
@@ -304,8 +286,6 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
       APPEND INITIAL LINE TO gt_table ASSIGNING <table>.
 
-*      CONCATENATE lv_parentname lv_name lv_value INTO <table> SEPARATED BY '='.
-
       <table>-parent = lv_parentname.
       <table>-name   = lv_name.
       <table>-value  = lv_value.
@@ -315,7 +295,7 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
 
   METHOD generate_nodes.
-    DATA: lt_split TYPE TABLE OF string,
+    DATA: lt_split  TYPE TABLE OF string,
           lv_string TYPE string.
 
     FIELD-SYMBOLS: <split> TYPE string,
@@ -336,8 +316,8 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method GET_NODE.
-  endmethod.
+  METHOD get_node.
+  ENDMETHOD.
 
 
   METHOD get_prefix.
@@ -351,178 +331,178 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
   ENDMETHOD.
 
 
-METHOD nest.
-  DATA: lcl_ixml   TYPE REF TO if_ixml,
+  METHOD nest.
+    DATA: lcl_ixml   TYPE REF TO if_ixml,
 
-        lv_counter TYPE p,
-        lv_times   TYPE p,
-        lv_aseqnr  TYPE p,
-        lv_anodnr  TYPE p,
-        lv_prefix  TYPE string.
+          lv_counter TYPE p,
+          lv_times   TYPE p,
+          lv_aseqnr  TYPE p,
+          lv_anodnr  TYPE p,
+          lv_prefix  TYPE string.
 
-  FIELD-SYMBOLS : <ubl>      TYPE any,
-                  <flattab>  TYPE zotct_s0001,
-                  <tabl>     LIKE LINE OF me->gt_tabl,
-                  <ttyp>     LIKE LINE OF me->gt_ttyp,
-                  <sproxdat> LIKE LINE OF me->gt_sproxdat,
-                  <tadir_v>  LIKE LINE OF me->gt_tadir_v.
+    FIELD-SYMBOLS : <ubl>      TYPE any,
+                    <flattab>  TYPE zotct_s0001,
+                    <tabl>     LIKE LINE OF me->gt_tabl,
+                    <ttyp>     LIKE LINE OF me->gt_ttyp,
+                    <sproxdat> LIKE LINE OF me->gt_sproxdat,
+                    <tadir_v>  LIKE LINE OF me->gt_tadir_v.
 
 *** Map ABAP Name
-  LOOP AT gt_flattab ASSIGNING <flattab>.
-    IF  <flattab>-table IS INITIAL.
-      READ TABLE me->gt_tabl WITH KEY xml_name = <flattab>-xmlkey ASSIGNING <tabl>.
-      IF sy-subrc EQ 0.
-        <flattab>-abap_name = <tabl>-abap_name.
-        <flattab>-r3_name   = <tabl>-r3_name.
-        <flattab>-r3_objtyp = <tabl>-r3_objtyp.
+    LOOP AT gt_flattab ASSIGNING <flattab>.
+      IF  <flattab>-table IS INITIAL.
+        READ TABLE me->gt_tabl WITH KEY xml_name = <flattab>-xmlkey ASSIGNING <tabl>.
+        IF sy-subrc EQ 0.
+          <flattab>-abap_name = <tabl>-abap_name.
+          <flattab>-r3_name   = <tabl>-r3_name.
+          <flattab>-r3_objtyp = <tabl>-r3_objtyp.
+        ENDIF.
+      ELSE.
+        READ TABLE me->gt_ttyp WITH KEY xml_name = <flattab>-xmlkey ASSIGNING <ttyp>.
+        IF sy-subrc EQ 0.
+          <flattab>-abap_name = <ttyp>-abap_name.
+          <flattab>-r3_name   = <ttyp>-r3_name.
+          <flattab>-r3_objtyp = <ttyp>-r3_objtyp.
+        ENDIF.
       ENDIF.
-    ELSE.
-      READ TABLE me->gt_ttyp WITH KEY xml_name = <flattab>-xmlkey ASSIGNING <ttyp>.
-      IF sy-subrc EQ 0.
-        <flattab>-abap_name = <ttyp>-abap_name.
-        <flattab>-r3_name   = <ttyp>-r3_name.
-        <flattab>-r3_objtyp = <ttyp>-r3_objtyp.
-      ENDIF.
-    ENDIF.
 
-    LOOP AT me->gt_sproxdat ASSIGNING <sproxdat>
-                              WHERE ifr_name EQ <flattab>-xmlkey
-                                AND r3_seqnum IS NOT INITIAL.
-      <flattab>-r3_seqnum = <sproxdat>-r3_seqnum.
-      EXIT.
+      LOOP AT me->gt_sproxdat ASSIGNING <sproxdat>
+                                WHERE ifr_name EQ <flattab>-xmlkey
+                                  AND r3_seqnum IS NOT INITIAL.
+        <flattab>-r3_seqnum = <sproxdat>-r3_seqnum.
+        EXIT.
+      ENDLOOP.
     ENDLOOP.
-  ENDLOOP.
 *** Create XML
-  TYPES: BEGIN OF ty_nodecoll,
-           flattab LIKE gt_flattab,
-         END OF ty_nodecoll.
+    TYPES: BEGIN OF ty_nodecoll,
+             flattab LIKE gt_flattab,
+           END OF ty_nodecoll.
 
 
-  DATA: lv_seqnr     TYPE seqnr,
-        lv_seqnr_max TYPE string,
-        lt_nodecoll  TYPE TABLE OF ty_nodecoll,
-        gt_flattab_d TYPE TABLE OF zotct_s0001.
+    DATA: lv_seqnr     TYPE seqnr,
+          lv_seqnr_max TYPE string,
+          lt_nodecoll  TYPE TABLE OF ty_nodecoll,
+          gt_flattab_d TYPE TABLE OF zotct_s0001.
 
-  FIELD-SYMBOLS: <flattab_d> LIKE LINE OF gt_flattab_d,
-                 <nodecoll>  LIKE LINE OF lt_nodecoll.
+    FIELD-SYMBOLS: <flattab_d> LIKE LINE OF gt_flattab_d,
+                   <nodecoll>  LIKE LINE OF lt_nodecoll.
 
-  CLEAR: lv_seqnr,
-         lv_seqnr_max.
+    CLEAR: lv_seqnr,
+           lv_seqnr_max.
 
-  CALL METHOD zotct_cl_itab_ext=>max
-    EXPORTING
-      colname = 'SEQNR'
-      table   = gt_flattab
-    RECEIVING
-      val      = lv_seqnr_max.
+    CALL METHOD zotct_cl_itab_ext=>max
+      EXPORTING
+        colname = 'SEQNR'
+        table   = gt_flattab
+      RECEIVING
+        val     = lv_seqnr_max.
 
-  DO lv_seqnr_max TIMES.
-    lv_seqnr = lv_seqnr + 1.
-    LOOP AT gt_flattab ASSIGNING <flattab> WHERE seqnr EQ lv_seqnr.
-      APPEND INITIAL LINE TO gt_flattab_d ASSIGNING <flattab_d>.
+    DO lv_seqnr_max TIMES.
+      lv_seqnr = lv_seqnr + 1.
+      LOOP AT gt_flattab ASSIGNING <flattab> WHERE seqnr EQ lv_seqnr.
+        APPEND INITIAL LINE TO gt_flattab_d ASSIGNING <flattab_d>.
 
-      MOVE-CORRESPONDING <flattab> TO <flattab_d>.
-    ENDLOOP.
-    APPEND INITIAL LINE TO lt_nodecoll ASSIGNING <nodecoll>.
-    <nodecoll>-flattab = gt_flattab_d.
-    CLEAR: gt_flattab_d[].
-  ENDDO.
+        MOVE-CORRESPONDING <flattab> TO <flattab_d>.
+      ENDLOOP.
+      APPEND INITIAL LINE TO lt_nodecoll ASSIGNING <nodecoll>.
+      <nodecoll>-flattab = gt_flattab_d.
+      CLEAR: gt_flattab_d[].
+    ENDDO.
 
-  me->create_nodemap( ).
+    me->create_nodemap( ).
 
 *** Render XML tree
 
-  me->gcl_ixml     = cl_ixml=>create( ).
-  me->gcl_document = me->gcl_ixml->create_document( ).
+    me->gcl_ixml     = cl_ixml=>create( ).
+    me->gcl_document = me->gcl_ixml->create_document( ).
 
-  FIELD-SYMBOLS: <nodemap> TYPE ty_nodemap.
+    FIELD-SYMBOLS: <nodemap> TYPE ty_nodemap.
 
-  DATA: lcl_parent TYPE REF TO if_ixml_element.
+    DATA: lcl_parent TYPE REF TO if_ixml_element.
 *  Create Parent Node
-  LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
+    LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
 
-    CLEAR: lv_prefix.
-    lv_prefix = me->get_prefix( xmlkey = <nodemap>-xmlkey ).
-
-    <nodemap>-obj = me->gcl_document->create_simple_element_ns( name = <nodemap>-xmlkey
-                                                                parent = me->gcl_document
-                                                                 ).
-
-    LOOP AT me->gt_flattab ASSIGNING <flattab> WHERE xmlval IS NOT INITIAL
-                                                   AND parent EQ <nodemap>-id.
-
-      CLEAR: lv_prefix.
-      lv_prefix = me->get_prefix( xmlkey = <flattab>-xmlkey ).
-
-      <flattab>-obj = me->gcl_document->create_simple_element_ns( name = <flattab>-xmlkey
-                                                                value = <flattab>-xmlval
-                                                                parent = <nodemap>-obj
-                                                                prefix = lv_prefix ).
-    ENDLOOP.
-    EXIT.
-  ENDLOOP.
-*  Create Children - from nodemap
-  FIELD-SYMBOLS: <parent>  TYPE ty_nodemap,
-                 <aparent> TYPE zotct_s0001.
-
-  LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
-    IF <nodemap>-id EQ 1.
-      CONTINUE.
-    ENDIF.
-*    Find parent
-    READ TABLE me->gt_nodemap ASSIGNING <parent> WITH KEY node = <nodemap>-parentnode.
-    IF sy-subrc EQ 0.
       CLEAR: lv_prefix.
       lv_prefix = me->get_prefix( xmlkey = <nodemap>-xmlkey ).
 
       <nodemap>-obj = me->gcl_document->create_simple_element_ns( name = <nodemap>-xmlkey
-                                                                  parent = <parent>-obj
-                                                                  prefix = lv_prefix ).
+                                                                  parent = me->gcl_document
+                                                                   ).
 
       LOOP AT me->gt_flattab ASSIGNING <flattab> WHERE xmlval IS NOT INITIAL
-                                                   AND parent EQ <nodemap>-id.
+                                                     AND parent EQ <nodemap>-id.
 
         CLEAR: lv_prefix.
         lv_prefix = me->get_prefix( xmlkey = <flattab>-xmlkey ).
 
-        IF <flattab>-attrib IS INITIAL.
-          <flattab>-obj = me->gcl_document->create_simple_element_ns( name = <flattab>-xmlkey
+        <flattab>-obj = me->gcl_document->create_simple_element_ns( name = <flattab>-xmlkey
                                                                   value = <flattab>-xmlval
                                                                   parent = <nodemap>-obj
                                                                   prefix = lv_prefix ).
-        ENDIF.
       ENDLOOP.
-    ENDIF.
-  ENDLOOP.
+      EXIT.
+    ENDLOOP.
+*  Create Children - from nodemap
+    FIELD-SYMBOLS: <parent>  TYPE ty_nodemap,
+                   <aparent> TYPE zotct_s0001.
 
-  LOOP AT me->gt_flattab ASSIGNING <flattab> WHERE attrib IS NOT INITIAL.
-    CLEAR: lv_aseqnr,
-           lv_anodnr.
+    LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
+      IF <nodemap>-id EQ 1.
+        CONTINUE.
+      ENDIF.
+*    Find parent
+      READ TABLE me->gt_nodemap ASSIGNING <parent> WITH KEY node = <nodemap>-parentnode.
+      IF sy-subrc EQ 0.
+        CLEAR: lv_prefix.
+        lv_prefix = me->get_prefix( xmlkey = <nodemap>-xmlkey ).
 
-    lv_aseqnr = <flattab>-seqnr - 1.
-    lv_anodnr = <flattab>-nodnr - 1.
+        <nodemap>-obj = me->gcl_document->create_simple_element_ns( name = <nodemap>-xmlkey
+                                                                    parent = <parent>-obj
+                                                                    prefix = lv_prefix ).
 
-    READ TABLE me->gt_flattab WITH KEY nodnr = <flattab>-nodnr
-                                       seqnr = lv_aseqnr
-                             ASSIGNING <aparent>.
-    IF sy-subrc EQ 0.
-      READ TABLE me->gt_flattab WITH KEY nodnr = lv_anodnr
+        LOOP AT me->gt_flattab ASSIGNING <flattab> WHERE xmlval IS NOT INITIAL
+                                                     AND parent EQ <nodemap>-id.
+
+          CLEAR: lv_prefix.
+          lv_prefix = me->get_prefix( xmlkey = <flattab>-xmlkey ).
+
+          IF <flattab>-attrib IS INITIAL.
+            <flattab>-obj = me->gcl_document->create_simple_element_ns( name = <flattab>-xmlkey
+                                                                    value = <flattab>-xmlval
+                                                                    parent = <nodemap>-obj
+                                                                    prefix = lv_prefix ).
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+    ENDLOOP.
+
+    LOOP AT me->gt_flattab ASSIGNING <flattab> WHERE attrib IS NOT INITIAL.
+      CLEAR: lv_aseqnr,
+             lv_anodnr.
+
+      lv_aseqnr = <flattab>-seqnr - 1.
+      lv_anodnr = <flattab>-nodnr - 1.
+
+      READ TABLE me->gt_flattab WITH KEY nodnr = <flattab>-nodnr
                                          seqnr = lv_aseqnr
-                                         xmlkey = <aparent>-xmlkey
                                ASSIGNING <aparent>.
       IF sy-subrc EQ 0.
-        IF <aparent>-obj IS INITIAL.
-          CONTINUE.
+        READ TABLE me->gt_flattab WITH KEY nodnr = lv_anodnr
+                                           seqnr = lv_aseqnr
+                                           xmlkey = <aparent>-xmlkey
+                                 ASSIGNING <aparent>.
+        IF sy-subrc EQ 0.
+          IF <aparent>-obj IS INITIAL.
+            CONTINUE.
+          ENDIF.
+          <aparent>-obj->set_attribute_ns( name = <flattab>-xmlkey value = <flattab>-xmlval ).
         ENDIF.
-        <aparent>-obj->set_attribute_ns( name = <flattab>-xmlkey value = <flattab>-xmlval ).
       ENDIF.
-    ENDIF.
-  ENDLOOP.
-ENDMETHOD.
+    ENDLOOP.
+  ENDMETHOD.
 
 
-  method SET_NAMESPACES.
-  endmethod.
+  METHOD set_namespaces.
+  ENDMETHOD.
 
 
   METHOD set_node.
