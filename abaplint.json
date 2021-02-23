@@ -221,7 +221,7 @@
       "main_file_contents": true,
       "type_form_parameters": true,
       "rfc_error_handling": true,
-      "abapdoc": true,
+      "abapdoc": false,
       "release_idoc": true,
       "prefer_returning_to_exporting": true,
       "keep_single_parameter_on_one_line": {
