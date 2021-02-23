@@ -75,9 +75,7 @@
       "global_class": true,
       "identical_form_names": true,
       "if_in_if": true,
-      "in_statement_indentation": {
-          "ignoreExceptions": true
-      },
+      "in_statement_indentation": false,
       "indentation": {
           "ignoreExceptions": true,
           "alignTryCatch": false,
