@@ -257,7 +257,7 @@
           "exclude": []
       },
       "forbidden_void_type": true,
-      "prefer_inline": true,
+      "prefer_inline": false,
       "reduce_string_templates": true,
       "sicf_consistency": true,
       "sql_escape_host_variables": true,
