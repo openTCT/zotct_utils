@@ -119,10 +119,10 @@
       },
       "method_parameter_names": {
           "ignoreExceptions": true,
-          "importing": "^I._.*$",
-          "returning": "^R._.*$",
-          "changing": "^C._.*$",
-          "exporting": "^E._.*$",
+          "importing": ".",
+          "returning": ".",
+          "changing": ".",
+          "exporting": ".",
           "ignoreNames": [
               "P_TASK"
           ]
