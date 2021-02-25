@@ -226,7 +226,7 @@
           "length": 120
       },
       "allowed_object_naming": true,
-      "chain_mainly_declarations": true,
+      "chain_mainly_declarations": false,
       "fully_type_constants": true,
       "check_abstract": true,
       "check_comments": {
