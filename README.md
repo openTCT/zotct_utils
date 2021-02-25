@@ -108,7 +108,7 @@ Utilities for tax identification numbers.
 Usage example
 
 ```abap
-DATA : lt_tin_list LIKE zotct_cl_tin=>gt_tin.  
+DATA : lt_tin_list TYPE zotct_tt0003
   
 CALL METHOD zotct_cl_tin=>create_dummy_tin  
   EXPORTING  
@@ -132,7 +132,7 @@ CALL METHOD zotct_cl_tin=>create_dummy_tin
 Usage example:
 
 ```abap
-DATA: lt_result_list LIKE zotct_cl_tin=>gt_result,  
+DATA: lt_result_list TYPE zotct_tt0004,  
       lv_valid TYPE abap_bool.  
 	  
 CALL METHOD zotct_cl_tin=>validate_tin  
