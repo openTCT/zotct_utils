@@ -1,61 +1,59 @@
-class ZOTCT_CL_TIN definition
-  public
-  final
-  create public .
+CLASS zotct_cl_tin DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  types:
-    BEGIN OF ty_tin,
-          tin TYPE string,
-          END OF ty_tin .
-  types:
-    BEGIN OF ty_result,
-          tin TYPE string,
-          valid TYPE abap_bool,
-          END OF ty_result .
+    TYPES:
+      BEGIN OF ty_tin,
+        tin TYPE string,
+      END OF ty_tin .
+    TYPES:
+      BEGIN OF ty_result,
+        tin   TYPE string,
+        valid TYPE abap_bool,
+      END OF ty_result .
 
-  data:
-    gt_tin TYPE TABLE OF ty_tin .
-  data:
-    gt_result TYPE TABLE OF ty_result .
+    CLASS-METHODS create_dummy_tin
+      IMPORTING
+        !locale   TYPE land1
+        !count    TYPE sytabix OPTIONAL
+        !type     TYPE char4 DEFAULT 'TCKN'
+      EXPORTING
+        !tin_list TYPE zotct_tt0003
+        !tin      TYPE string .
+    CLASS-METHODS validate_tin
+      IMPORTING
+        !locale      TYPE land1
+        !tin_list    TYPE zotct_tt0003 OPTIONAL
+        !tin         TYPE string OPTIONAL
+        !type        TYPE char4 DEFAULT 'TCKN'
+      EXPORTING
+        !result_list TYPE zotct_tt0004
+        !valid       TYPE abap_bool .
+  PROTECTED SECTION.
 
-  class-methods CREATE_DUMMY_TIN
-    importing
-      !LOCALE type LAND1
-      !COUNT type SYTABIX optional
-      !TYPE type CHAR4 default 'TCKN'
-    exporting
-      !TIN_LIST like GT_TIN
-      !TIN type STRING .
-  class-methods VALIDATE_TIN
-    importing
-      !LOCALE type LAND1
-      !TIN_LIST like GT_TIN optional
-      !TIN type STRING optional
-      !TYPE type CHAR4 default 'TCKN'
-    exporting
-      !RESULT_LIST like GT_RESULT
-      !VALID type ABAP_BOOL .
-protected section.
-private section.
+    DATA mt_tin TYPE zotct_tt0003 .
+    DATA mt_result TYPE zotct_tt0004 .
+  PRIVATE SECTION.
 
-  class-methods CRE_DUMMY_TIN_TR
-    importing
-      !COUNT type SYTABIX
-      !TYPE type CHAR4
-    exporting
-      !TIN_LIST like GT_TIN
-      !TIN type STRING .
-  class-methods VALIDATE_TIN_TR
-    importing
-      !LOCALE type LAND1
-      !TIN_LIST like GT_TIN optional
-      !TIN type STRING optional
-      !TYPE type CHAR4
-    exporting
-      !RESULT_LIST like GT_RESULT
-      !VALID type ABAP_BOOL .
+    CLASS-METHODS cre_dummy_tin_tr
+      IMPORTING
+        !count    TYPE sytabix
+        !type     TYPE char4
+      EXPORTING
+        !tin_list TYPE zotct_tt0003
+        !tin      TYPE string .
+    CLASS-METHODS validate_tin_tr
+      IMPORTING
+        !locale      TYPE land1
+        !tin_list    TYPE zotct_tt0003 OPTIONAL
+        !tin         TYPE string OPTIONAL
+        !type        TYPE char4
+      EXPORTING
+        !result_list TYPE zotct_tt0004
+        !valid       TYPE abap_bool .
 ENDCLASS.
 
 
@@ -81,19 +79,15 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
 
   METHOD cre_dummy_tin_tr.
 
-    DATA : lv_ran_int      TYPE qfranint,
-           ls_tin          TYPE ty_tin,
-
-           lv_tckn_root(9),
-
-           lv_even_sum     TYPE p,
-           lv_odd_sum      TYPE p,
-
-           lv_mod1         TYPE p,
-           lv_mod2         TYPE p,
-
-           lv_dec10,
-           lv_dec11.
+    DATA: lv_ran_int      TYPE qfranint,
+          ls_tin          TYPE ty_tin,
+          lv_tckn_root(9),
+          lv_even_sum     TYPE p,
+          lv_odd_sum      TYPE p,
+          lv_mod1         TYPE p,
+          lv_mod2         TYPE p,
+          lv_dec10,
+          lv_dec11.
 
     DO count TIMES.
 
@@ -162,7 +156,7 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method VALIDATE_TIN.
+  METHOD validate_tin.
     CASE locale.
       WHEN 'TR'.
         CALL METHOD zotct_cl_tin=>validate_tin_tr
@@ -178,29 +172,22 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
       WHEN OTHERS.
 
     ENDCASE.
-  endmethod.
+  ENDMETHOD.
 
 
   METHOD validate_tin_tr.
 
-    DATA : ls_list         TYPE ty_tin,
-           ls_result_list  TYPE ty_result,
-
-
-           lv_tckn_root(9),
-           lv_tckn(11),
-
-           lv_even_sum     TYPE p,
-           lv_odd_sum      TYPE p,
-
-           lv_mod1         TYPE p,
-           lv_mod2         TYPE p,
-
-           lv_dec10,
-           lv_dec11,
-           lv_strlen       TYPE p.
-
-
+    DATA: ls_list         TYPE ty_tin,
+          ls_result_list  TYPE ty_result,
+          lv_tckn_root(9),
+          lv_tckn(11),
+          lv_even_sum     TYPE p,
+          lv_odd_sum      TYPE p,
+          lv_mod1         TYPE p,
+          lv_mod2         TYPE p,
+          lv_dec10,
+          lv_dec11,
+          lv_strlen       TYPE p.
 
     LOOP AT tin_list INTO ls_list.
       CLEAR ls_result_list.
@@ -232,13 +219,13 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
           CONTINUE.
         ENDIF.
 
-        CLEAR : lv_tckn_root,
-                lv_even_sum,
-                lv_odd_sum,
-                lv_mod1,
-                lv_mod2,
-                lv_dec10,
-                lv_dec11.
+        CLEAR: lv_tckn_root,
+               lv_even_sum,
+               lv_odd_sum,
+               lv_mod1,
+               lv_mod2,
+               lv_dec10,
+               lv_dec11.
 
         lv_tckn = ls_list-tin.
 
@@ -276,8 +263,7 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
 
     LOOP AT result_list INTO ls_result_list WHERE valid IS INITIAL.
       valid = abap_false.
-      exit.
+      EXIT.
     ENDLOOP.
-
   ENDMETHOD.
 ENDCLASS.
