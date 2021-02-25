@@ -7,7 +7,7 @@
   },
   "syntax": {
       "version": "v753",
-      "errorNamespace": "",
+      "errorNamespace": "^(Z|Y|LCL_|TY_|LIF_)",
       "globalConstants": [],
       "globalMacros": []
   },
@@ -75,15 +75,13 @@
       "global_class": true,
       "identical_form_names": true,
       "if_in_if": true,
-      "in_statement_indentation": {
-          "ignoreExceptions": true
-      },
+      "in_statement_indentation": false,
       "indentation": {
           "ignoreExceptions": true,
           "alignTryCatch": false,
-          "globalClassSkipFirst": true,
-          "ignoreGlobalClassDefinition": true,
-          "ignoreGlobalInterface": true
+          "globalClassSkipFirst": false,
+          "ignoreGlobalClassDefinition": false,
+          "ignoreGlobalInterface": false
       },
       "inline_data_old_versions": true,
       "keyword_case": {
@@ -108,23 +106,23 @@
           "exception": "^LCX_.*$"
       },
       "local_variable_names": {
-          "expectedData": "^L._.*$",
-          "expectedConstant": "^LC_.*$",
-          "expectedFS": "^<L._.*>$"
+          "expectedData": ".",
+          "expectedConstant": "^.",
+          "expectedFS": "."
       },
       "max_one_statement": true,
       "message_exists": true,
       "method_length": {
-          "statements": 100,
+          "statements": 1000,
           "ignoreTestClasses": false,
-          "errorWhenEmpty": true
+          "errorWhenEmpty": false
       },
       "method_parameter_names": {
           "ignoreExceptions": true,
-          "importing": "^I._.*$",
-          "returning": "^R._.*$",
-          "changing": "^C._.*$",
-          "exporting": "^E._.*$",
+          "importing": ".",
+          "returning": ".",
+          "changing": ".",
+          "exporting": ".",
           "ignoreNames": [
               "P_TASK"
           ]
@@ -138,15 +136,15 @@
           "allowReadOnly": true
       },
       "object_naming": {
-          "clas": "^ZC(L|X)\\_",
-          "intf": "^ZIF\\_",
-          "prog": "^Z",
-          "fugr": "^Z",
-          "tabl": "^Z",
-          "ttyp": "^Z",
-          "dtel": "^Z",
-          "doma": "^Z",
-          "msag": "^Z",
+          "clas": "^ZOTCT_C(L|X)\\_",
+          "intf": "^ZOTCT_IF\\_",
+          "prog": "^ZOTCT",
+          "fugr": "^ZOTCT",
+          "tabl": "^ZOTCT",
+          "ttyp": "^ZOTCT",
+          "dtel": "^ZOTCT",
+          "doma": "^ZOTCT",
+          "msag": "^ZOTCT",
           "tran": "^Z",
           "enqu": "^EZ",
           "auth": "^Z",
@@ -176,10 +174,7 @@
           "badOperators": ["><"
           ]
       },
-      "remove_descriptions": {
-          "ignoreExceptions": false,
-          "ignoreWorkflow": true
-      },
+      "remove_descriptions": false,
       "sequential_blank": {
           "lines": 4
       },
@@ -221,14 +216,14 @@
       "main_file_contents": true,
       "type_form_parameters": true,
       "rfc_error_handling": true,
-      "abapdoc": true,
+      "abapdoc": false,
       "release_idoc": true,
       "prefer_returning_to_exporting": true,
       "keep_single_parameter_on_one_line": {
           "length": 120
       },
       "allowed_object_naming": true,
-      "chain_mainly_declarations": true,
+      "chain_mainly_declarations": false,
       "fully_type_constants": true,
       "check_abstract": true,
       "check_comments": {
@@ -248,16 +243,16 @@
       "check_include": true,
       "xml_consistency": true,
       "prefix_is_current_class": {
-          "omitMeInstanceCalls": true
+          "omitMeInstanceCalls": false
       },
       "check_no_handler_pragma": true,
-      "line_break_multiple_parameters": true,
+      "line_break_multiple_parameters": false,
       "forbidden_identifier": {
           "check": [],
           "exclude": []
       },
       "forbidden_void_type": true,
-      "prefer_inline": true,
+      "prefer_inline": false,
       "reduce_string_templates": true,
       "sicf_consistency": true,
       "sql_escape_host_variables": true,
@@ -265,7 +260,7 @@
       "types_naming": {
           "pattern": "^T._.*$"
       },
-      "unknown_types": true,
+      "unknown_types": false,
       "unused_variables": true,
       "begin_single_include": true,
       "check_subrc": true,
@@ -273,8 +268,8 @@
           "max": 6
       },
       "forbidden_pseudo_and_pragma": {
-          "ignoreGlobalClassDefinition": false,
-          "ignoreGlobalInterface": false,
+          "ignoreGlobalClassDefinition": true,
+          "ignoreGlobalInterface": true,
           "pragmas": ["##NO_TEXT"],
           "pseudo": ["#EC NOTEXT"]
         },
