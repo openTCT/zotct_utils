@@ -1,23 +1,23 @@
-class ZOTCT_UBL_F definition
-  public
-  final
-  create public .
+CLASS zotct_ubl_f DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  interfaces ZOTCT_IF_UBL .
+    INTERFACES zotct_if_ubl .
 
-  methods CONSTRUCTOR
-    importing
-      !LOCALE type ZOTCT_DE0001
-      !PRODUCT type ZOTCT_DE0002 .
-  methods GET_UBL
-    returning
-      value(UBL) type ref to OBJECT .
-protected section.
-private section.
+    METHODS constructor
+      IMPORTING
+        !locale  TYPE zotct_de0001
+        !product TYPE zotct_de0002 .
+    METHODS get_ubl
+      RETURNING
+        VALUE(ubl) TYPE REF TO object .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 
-  data MO_UBL type ref to OBJECT .
+    DATA mo_ubl TYPE REF TO object .
 ENDCLASS.
 
 

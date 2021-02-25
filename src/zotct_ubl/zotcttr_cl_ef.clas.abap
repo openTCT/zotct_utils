@@ -1,41 +1,41 @@
-class ZOTCTTR_CL_EF definition
-  public
-  inheriting from ZOTCT_CL_UBL
-  final
-  create public .
+CLASS zotcttr_cl_ef DEFINITION
+  PUBLIC
+  INHERITING FROM zotct_cl_ubl
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  methods CONSTRUCTOR
-    exceptions
-      CX_SCSM_CUSTOMIZING .
+    METHODS constructor
+      EXCEPTIONS
+        cx_scsm_customizing .
 
-  methods GET_XMLSTR
-    redefinition .
-protected section.
+    METHODS get_xmlstr
+        REDEFINITION .
+  PROTECTED SECTION.
 
-  data GC_XMLNS type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2' ##NO_TEXT.
-  data GC_CAC type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2' ##NO_TEXT.
-  data GC_XADES type STRING value 'http://uri.etsi.org/01903/v1.3.2#' ##NO_TEXT.
-  data GC_UDT type STRING value 'urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2' ##NO_TEXT.
-  data GC_CBC type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2' ##NO_TEXT.
-  data GC_CCTS type STRING value 'urn:un:unece:uncefact:documentation:2' ##NO_TEXT.
-  data GC_UBLTR type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:TurkishCustomizationExtensionComponents' ##NO_TEXT.
-  data GC_QDT type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2' ##NO_TEXT.
-  data GC_EXT type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2' ##NO_TEXT.
-  data GC_DS type STRING value 'http://www.w3.org/2000/09/xmldsig#' ##NO_TEXT.
-  data GC_XSI type STRING value 'http://www.w3.org/2001/XMLSchema-instance' ##NO_TEXT.
-  data GC_SCHEMALOCATION type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 UBL-Invoice-2.1.xsd' ##NO_TEXT.
-  data GC_NS8 type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2' ##NO_TEXT.
-  data GC_DOCNAME type STRING value 'Invoice' ##NO_TEXT.
+    DATA gc_xmlns TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2' ##NO_TEXT.
+    DATA gc_cac TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2' ##NO_TEXT.
+    DATA gc_xades TYPE string VALUE 'http://uri.etsi.org/01903/v1.3.2#' ##NO_TEXT.
+    DATA gc_udt TYPE string VALUE 'urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2' ##NO_TEXT.
+    DATA gc_cbc TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2' ##NO_TEXT.
+    DATA gc_ccts TYPE string VALUE 'urn:un:unece:uncefact:documentation:2' ##NO_TEXT.
+    DATA gc_ubltr TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:TurkishCustomizationExtensionComponents' ##NO_TEXT.
+    DATA gc_qdt TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2' ##NO_TEXT.
+    DATA gc_ext TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2' ##NO_TEXT.
+    DATA gc_ds TYPE string VALUE 'http://www.w3.org/2000/09/xmldsig#' ##NO_TEXT.
+    DATA gc_xsi TYPE string VALUE 'http://www.w3.org/2001/XMLSchema-instance' ##NO_TEXT.
+    DATA gc_schemalocation TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 UBL-Invoice-2.1.xsd' ##NO_TEXT.
+    DATA gc_ns8 TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2' ##NO_TEXT.
+    DATA gc_docname TYPE string VALUE 'Invoice' ##NO_TEXT.
 
-  methods GET_PREFIX
-    redefinition .
-  methods SET_NAMESPACES
-    redefinition .
-  methods CREATE_NODEMAP
-    redefinition .
-private section.
+    METHODS get_prefix
+        REDEFINITION .
+    METHODS set_namespaces
+        REDEFINITION .
+    METHODS create_nodemap
+        REDEFINITION .
+  PRIVATE SECTION.
 ENDCLASS.
 
 
@@ -45,7 +45,7 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
   METHOD constructor.
 
-    FIELD-SYMBOLS: <t0001> LIKE LINE OF me->gt_t0001.
+    FIELD-SYMBOLS: <t0001> LIKE LINE OF me->mt_t0001.
 
     DATA: lv_prefixp TYPE tabname.
 
@@ -53,26 +53,26 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
 ***  Read configuration data
 
-    SELECT * INTO CORRESPONDING FIELDS OF TABLE me->gt_t0001
+    SELECT * INTO CORRESPONDING FIELDS OF TABLE me->mt_t0001
       FROM zotct_t0001
       WHERE locale EQ 'TR'
         AND product EQ 'EF'.
 
-    READ TABLE me->gt_t0001 ASSIGNING <t0001> INDEX 1.
+    READ TABLE me->mt_t0001 ASSIGNING <t0001> INDEX 1.
 
     IF sy-subrc NE 0.
       RAISE cx_scsm_customizing.
     ENDIF.
 
-    CLEAR : lv_prefixp.
+    CLEAR: lv_prefixp.
 
     CONCATENATE <t0001>-prefix '%' INTO lv_prefixp.
 
-    SELECT * INTO CORRESPONDING FIELDS OF TABLE me->gt_sproxdat
+    SELECT * INTO CORRESPONDING FIELDS OF TABLE me->mt_sproxdat
       FROM sproxdat
       WHERE obj_name LIKE lv_prefixp.
 
-    SELECT * INTO CORRESPONDING FIELDS OF TABLE me->gt_tadir_v
+    SELECT * INTO CORRESPONDING FIELDS OF TABLE me->mt_tadir_v
       FROM sproxhdr_tadir_v
       WHERE prefix EQ <t0001>-prefix.
 
@@ -81,11 +81,11 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
     DATA: data_type TYPE REF TO cl_abap_elemdescr,
           wf_ref    TYPE REF TO data.
 
-    FIELD-SYMBOLS : <sproxdat> LIKE LINE OF me->gt_sproxdat,
-                    <data>     TYPE ty_data,
-                    <tadir_v>  LIKE LINE OF me->gt_tadir_v.
+    FIELD-SYMBOLS: <sproxdat> LIKE LINE OF me->mt_sproxdat,
+                   <data>     TYPE zotct_s0006,
+                   <tadir_v>  LIKE LINE OF me->mt_tadir_v.
 
-    LOOP AT me->gt_sproxdat ASSIGNING <sproxdat>.
+    LOOP AT me->mt_sproxdat ASSIGNING <sproxdat>.
       CASE <sproxdat>-object1.
         WHEN 'FIEL'.
 
@@ -96,9 +96,9 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
           CREATE DATA wf_ref TYPE (<sproxdat>-obj_name_r).
 
           IF <sproxdat>-object_r EQ 'TTYP'.
-            APPEND INITIAL LINE TO me->gt_ttyp ASSIGNING <data>.
+            APPEND INITIAL LINE TO me->mt_ttyp ASSIGNING <data>.
           ELSE.
-            APPEND INITIAL LINE TO me->gt_tabl ASSIGNING <data>.
+            APPEND INITIAL LINE TO me->mt_tabl ASSIGNING <data>.
           ENDIF.
 
           <data>-data = wf_ref.
@@ -110,7 +110,7 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
              <sproxdat>-ifr_name EQ 'TimeType' OR
              <sproxdat>-ifr_name EQ 'TimeType.Content'.
 
-            READ TABLE me->gt_tadir_v ASSIGNING <tadir_v> WITH KEY obj_name_m = <sproxdat>-obj_name_r.
+            READ TABLE me->mt_tadir_v ASSIGNING <tadir_v> WITH KEY obj_name_m = <sproxdat>-obj_name_r.
             IF sy-subrc EQ 0.
               <data>-xml_name = <tadir_v>-ifr_name.
             ENDIF.
@@ -129,9 +129,9 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
           CREATE DATA wf_ref TYPE (<sproxdat>-obj_name1).
           IF <sproxdat>-object_r EQ 'TTYP'.
-            APPEND INITIAL LINE TO me->gt_ttyp ASSIGNING <data>.
+            APPEND INITIAL LINE TO me->mt_ttyp ASSIGNING <data>.
           ELSE.
-            APPEND INITIAL LINE TO me->gt_tabl ASSIGNING <data>.
+            APPEND INITIAL LINE TO me->mt_tabl ASSIGNING <data>.
           ENDIF.
           <data>-data = wf_ref.
           <data>-abap_name = <sproxdat>-obj_name1.
@@ -143,7 +143,7 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
              <sproxdat>-ifr_name EQ 'TimeType' OR
              <sproxdat>-ifr_name EQ 'TimeType.Content'.
 
-            READ TABLE me->gt_tadir_v ASSIGNING <tadir_v> WITH KEY obj_name_m = <sproxdat>-obj_name1.
+            READ TABLE me->mt_tadir_v ASSIGNING <tadir_v> WITH KEY obj_name_m = <sproxdat>-obj_name1.
             IF sy-subrc EQ 0.
               <data>-xml_name = <tadir_v>-ifr_name.
             ENDIF.
@@ -159,26 +159,15 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
           CONTINUE.
       ENDCASE.
     ENDLOOP.
-
-    DATA: lv_tabname TYPE tabname.
-
-    CLEAR: lv_tabname.
-
-    SELECT SINGLE tabname INTO lv_tabname
-    FROM dd03vv
-    WHERE tabname LIKE lv_prefixp
-      AND fieldname EQ 'STANDARD_BUSINESS_DOCUMENT'.
-
-    CREATE DATA gs_ubl TYPE (lv_tabname).
   ENDMETHOD.
 
 
   METHOD create_nodemap.
     CALL METHOD super->create_nodemap.
 ***  Rearrange nodemap order for Turkey e-Fatura
-    FIELD-SYMBOLS: <nodemap> LIKE LINE OF me->gt_nodemap.
+    FIELD-SYMBOLS: <nodemap> LIKE LINE OF me->mt_nodemap.
 
-    LOOP AT me->gt_nodemap ASSIGNING <nodemap>.
+    LOOP AT me->mt_nodemap ASSIGNING <nodemap>.
       CASE <nodemap>-node.
         WHEN 'Invoice->UBLExtensions'.
           <nodemap>-r3_seqnum = 1.
@@ -304,7 +293,7 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
       ENDCASE.
     ENDLOOP.
 
-    SORT me->gt_nodemap BY nestcnt ASCENDING
+    SORT me->mt_nodemap BY nestcnt ASCENDING
                            r3_seqnum ASCENDING.
 
   ENDMETHOD.
@@ -313,17 +302,17 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
   METHOD get_prefix.
     DATA: lv_ifrname TYPE string.
 
-    FIELD-SYMBOLS: <tadir_v>  LIKE LINE OF me->gt_tadir_v,
+    FIELD-SYMBOLS: <tadir_v>  LIKE LINE OF me->mt_tadir_v,
                    <flattab>  TYPE zotct_s0001,
-                   <sproxdat> LIKE LINE OF me->gt_sproxdat.
+                   <sproxdat> LIKE LINE OF me->mt_sproxdat.
 
-    READ TABLE me->gt_tadir_v WITH KEY ifr_name = xmlkey ASSIGNING <tadir_v>.
+    READ TABLE me->mt_tadir_v WITH KEY ifr_name = xmlkey ASSIGNING <tadir_v>.
     IF sy-subrc EQ 0.
       prefix = <tadir_v>-ifr_nspce.
     ELSE.
       CLEAR: lv_ifrname.
       CONCATENATE xmlkey 'Type' INTO lv_ifrname.
-      READ TABLE me->gt_tadir_v WITH KEY ifr_name = lv_ifrname ASSIGNING <tadir_v>.
+      READ TABLE me->mt_tadir_v WITH KEY ifr_name = lv_ifrname ASSIGNING <tadir_v>.
       IF sy-subrc EQ 0.
         prefix = <tadir_v>-ifr_nspce.
       ELSE.
@@ -332,7 +321,7 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
           lv_ifrname = <flattab>-abap_name.
         ENDIF.
 
-        READ TABLE me->gt_tadir_v WITH KEY obj_name = lv_ifrname ASSIGNING <tadir_v>.
+        READ TABLE me->mt_tadir_v WITH KEY obj_name = lv_ifrname ASSIGNING <tadir_v>.
         IF sy-subrc EQ 0.
           prefix = <tadir_v>-ifr_nspce.
         ENDIF.
@@ -340,11 +329,11 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
     ENDIF.
 
     IF xmlkey EQ 'ActualPackage'.
-      READ TABLE me->gt_sproxdat WITH KEY ifr_name = xmlkey ASSIGNING <sproxdat>.
+      READ TABLE me->mt_sproxdat WITH KEY ifr_name = xmlkey ASSIGNING <sproxdat>.
       IF sy-subrc EQ 0.
         lv_ifrname = <sproxdat>-obj_name.
       ENDIF.
-      READ TABLE me->gt_tadir_v WITH KEY obj_name = lv_ifrname ASSIGNING <tadir_v>.
+      READ TABLE me->mt_tadir_v WITH KEY obj_name = lv_ifrname ASSIGNING <tadir_v>.
       IF sy-subrc EQ 0.
         prefix = <tadir_v>-ifr_nspce.
       ENDIF.
@@ -394,9 +383,9 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
     CONCATENATE '<?xml version="1.0" encoding="utf-8"?>' cl_abap_char_utilities=>newline INTO lv_encoding.
 
-    REPLACE ALL OCCURRENCES OF '<?xml version="1.0" encoding="utf-16"?>' IN me->gv_xmlstr WITH lv_encoding.
+    REPLACE ALL OCCURRENCES OF '<?xml version="1.0" encoding="utf-16"?>' IN me->mv_xmlstr WITH lv_encoding.
 
-    xmlstr = me->gv_xmlstr.
+    xmlstr = me->mv_xmlstr.
   ENDMETHOD.
 
 
@@ -405,11 +394,11 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 *    .
 
 *** set namespaces redefinition
-    DATA : lcl_iterator TYPE REF TO if_ixml_node_iterator,
-           lv_name      TYPE string,
-           lcl_element  TYPE REF TO if_ixml_element,
-           lcl_node     TYPE REF TO if_ixml_node,
-           lcl_attr     TYPE REF TO if_ixml_attribute.
+    DATA: lcl_iterator TYPE REF TO if_ixml_node_iterator,
+          lv_name      TYPE string,
+          lcl_element  TYPE REF TO if_ixml_element,
+          lcl_node     TYPE REF TO if_ixml_node,
+          lcl_attr     TYPE REF TO if_ixml_attribute.
 
 
     lcl_iterator = me->gcl_document->create_iterator( ).
@@ -445,11 +434,11 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
       lcl_node = lcl_iterator->get_next( ).
     ENDWHILE.
 
-    CLEAR me->gv_xmlstr.
+    CLEAR me->mv_xmlstr.
 
     me->gcl_ixml->create_renderer( document = me->gcl_document
                                 ostream  = me->gcl_ixml->create_stream_factory(
-                                )->create_ostream_cstring( string = gv_xmlstr
+                                )->create_ostream_cstring( string = mv_xmlstr
                                 ) )->render( ).
   ENDMETHOD.
 ENDCLASS.

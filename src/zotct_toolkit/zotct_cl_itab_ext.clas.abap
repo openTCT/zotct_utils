@@ -1,28 +1,28 @@
-class ZOTCT_CL_ITAB_EXT definition
-  public
-  final
-  create public .
+CLASS zotct_cl_itab_ext DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  class-methods SHUFFLE
-    changing
-      !TABLE type STANDARD TABLE .
-  class-methods REVERSE
-    changing
-      !TABLE type STANDARD TABLE .
-  class-methods MAX
-    importing
-      !COLNAME type STRING
-      !TABLE type STANDARD TABLE
-    returning
-      value(VAL) type STRING .
-  class-methods MIN
-    importing
-      !COLNAME type STRING
-      !TABLE type STANDARD TABLE
-    returning
-      value(VAL) type STRING .
+    CLASS-METHODS shuffle
+      CHANGING
+        !table TYPE STANDARD TABLE .
+    CLASS-METHODS reverse
+      CHANGING
+        !table TYPE STANDARD TABLE .
+    CLASS-METHODS max
+      IMPORTING
+        !colname   TYPE string
+        !table     TYPE STANDARD TABLE
+      RETURNING
+        VALUE(val) TYPE string .
+    CLASS-METHODS min
+      IMPORTING
+        !colname   TYPE string
+        !table     TYPE STANDARD TABLE
+      RETURNING
+        VALUE(val) TYPE string .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
@@ -44,6 +44,8 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     CREATE DATA: lcl_ref LIKE table.
     ASSIGN: lcl_ref->* TO <restab>,
             colname TO <colname>.
+
+    CHECK sy-subrc IS INITIAL.
 
     <restab> = table.
 
@@ -71,6 +73,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     CREATE DATA: lcl_ref LIKE table.
     ASSIGN: lcl_ref->* TO <restab>,
             colname TO <colname>.
+    CHECK sy-subrc IS INITIAL.
 
     <restab> = table.
 
@@ -96,7 +99,6 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
           l_new_table   TYPE REF TO data,
           l_new_struct  TYPE REF TO data,
           l_new_struct2 TYPE REF TO data,
-
           l_ref         TYPE REF TO data.
 
     FIELD-SYMBOLS: <f_target_tab>     TYPE ANY TABLE,
@@ -107,15 +109,19 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     CREATE DATA: l_ref LIKE table.
 
     ASSIGN l_ref->* TO <f_target_tab>.
+    CHECK sy-subrc IS INITIAL.
 
-    lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
-    l_datadescr = lo_new_tab->get_table_line_type( ).
+    TRY.
+        lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
+        l_datadescr = lo_new_tab->get_table_line_type( ).
+        l_structure ?= l_datadescr.
+      CATCH cx_root.
+        EXIT.
+    ENDTRY.
 
-    l_structure ?= l_datadescr.
     l_comp_tab = l_structure->get_components( ).
 
     l_comp-name = 'SEQNR'.
-*    l_comp-type = cl_abap_elemdescr=>get_c( p_length = '10' ).
     l_comp-type = cl_abap_elemdescr=>get_int8( ).
     APPEND l_comp TO l_comp_tab. CLEAR l_comp.
 
@@ -124,13 +130,15 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
     CREATE DATA l_new_table    TYPE HANDLE lo_new_tab.
     ASSIGN l_new_table->* TO <f_target_tab>.
+    CHECK sy-subrc IS INITIAL.
 
     CREATE DATA l_new_struct2 TYPE HANDLE l_structure2.
     ASSIGN l_new_struct2->* TO <f_target_struct2>.
+    CHECK sy-subrc IS INITIAL.
 
     CREATE DATA l_new_struct TYPE HANDLE l_structure.
     ASSIGN l_new_struct->* TO <f_target_struct>.
-
+    CHECK sy-subrc IS INITIAL.
 
 ** Fill in the SEQNR field with random integers
     DATA: lv_lines   TYPE qfranint,
@@ -177,23 +185,25 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
           l_new_table   TYPE REF TO data,
           l_new_struct  TYPE REF TO data,
           l_new_struct2 TYPE REF TO data,
-
           l_ref         TYPE REF TO data.
 
-    FIELD-SYMBOLS : <f_target_tab>     TYPE ANY TABLE,
-                    <f_target_struct>  TYPE any,
-                    <f_target_struct2> TYPE any,
-                    <f_field>          TYPE any.
+    FIELD-SYMBOLS: <f_target_tab>     TYPE ANY TABLE,
+                   <f_target_struct>  TYPE any,
+                   <f_target_struct2> TYPE any,
+                   <f_field>          TYPE any.
 
     CREATE DATA: l_ref LIKE table.
 
     ASSIGN l_ref->* TO <f_target_tab>.
 
 
-    lo_new_tab ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
-    l_datadescr = lo_new_tab->get_table_line_type( ).
-
-    l_structure ?= l_datadescr.
+    TRY.
+        lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
+        l_datadescr = lo_new_tab->get_table_line_type( ).
+        l_structure ?= l_datadescr.
+      CATCH cx_root.
+        EXIT.
+    ENDTRY.
     l_comp_tab = l_structure->get_components( ).
 
     l_comp-name = 'SEQNR'.
@@ -205,13 +215,15 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
     CREATE DATA l_new_table    TYPE HANDLE lo_new_tab.
     ASSIGN l_new_table->* TO <f_target_tab>.
+    CHECK sy-subrc IS INITIAL.
 
     CREATE DATA l_new_struct2 TYPE HANDLE l_structure2.
     ASSIGN l_new_struct2->* TO <f_target_struct2>.
+    CHECK sy-subrc IS INITIAL.
 
     CREATE DATA l_new_struct TYPE HANDLE l_structure.
     ASSIGN l_new_struct->* TO <f_target_struct>.
-
+    CHECK sy-subrc IS INITIAL.
 
 ** Fill in the SEQNR field with random integers
     DATA: lv_lines   TYPE qfranint,
@@ -223,6 +235,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
     LOOP AT table ASSIGNING <f_target_struct>.
       ASSIGN COMPONENT 'SEQNR' OF STRUCTURE <f_target_struct2> TO <f_field>.
+      CHECK sy-subrc IS INITIAL.
 
       MOVE-CORRESPONDING <f_target_struct> TO <f_target_struct2>.
 
