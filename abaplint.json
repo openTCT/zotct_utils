@@ -174,10 +174,7 @@
           "badOperators": ["><"
           ]
       },
-      "remove_descriptions": {
-          "ignoreExceptions": false,
-          "ignoreWorkflow": true
-      },
+      "remove_descriptions": false,
       "sequential_blank": {
           "lines": 4
       },
