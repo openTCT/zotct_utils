@@ -113,9 +113,9 @@
       "max_one_statement": true,
       "message_exists": true,
       "method_length": {
-          "statements": 100,
+          "statements": 1000,
           "ignoreTestClasses": false,
-          "errorWhenEmpty": true
+          "errorWhenEmpty": false
       },
       "method_parameter_names": {
           "ignoreExceptions": true,
