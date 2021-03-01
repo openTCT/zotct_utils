@@ -196,6 +196,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
     ASSIGN l_ref->* TO <f_target_tab>.
 
+
     TRY.
         lo_new_tab   ?= cl_abap_tabledescr=>describe_by_data_ref( l_ref ).
         l_datadescr = lo_new_tab->get_table_line_type( ).

@@ -316,7 +316,7 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
       IF sy-subrc EQ 0.
         prefix = <tadir_v>-ifr_nspce.
       ELSE.
-        READ TABLE me->gt_flattab WITH KEY xmlkey = xmlkey ASSIGNING <flattab>.
+        READ TABLE me->mt_flattab WITH KEY xmlkey = xmlkey ASSIGNING <flattab>.
         IF sy-subrc EQ 0.
           lv_ifrname = <flattab>-abap_name.
         ENDIF.
@@ -401,7 +401,7 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
           lcl_attr     TYPE REF TO if_ixml_attribute.
 
 
-    lcl_iterator = me->gcl_document->create_iterator( ).
+    lcl_iterator = me->mo_document->create_iterator( ).
     lcl_node = lcl_iterator->get_next( ).
 
     WHILE lcl_node IS NOT INITIAL.
@@ -436,8 +436,8 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
     CLEAR me->mv_xmlstr.
 
-    me->gcl_ixml->create_renderer( document = me->gcl_document
-                                ostream  = me->gcl_ixml->create_stream_factory(
+    me->mo_ixml->create_renderer( document = me->mo_document
+                                ostream  = me->mo_ixml->create_stream_factory(
                                 )->create_ostream_cstring( string = mv_xmlstr
                                 ) )->render( ).
   ENDMETHOD.
