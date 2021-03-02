@@ -33,9 +33,6 @@ CLASS zotct_cl_tin DEFINITION
         !result_list TYPE zotct_tt0004
         !valid       TYPE abap_bool .
   PROTECTED SECTION.
-
-    DATA mt_tin TYPE zotct_tt0003 .
-    DATA mt_result TYPE zotct_tt0004 .
   PRIVATE SECTION.
 
     CLASS-METHODS cre_dummy_tin_tr
@@ -47,7 +44,6 @@ CLASS zotct_cl_tin DEFINITION
         !tin      TYPE string .
     CLASS-METHODS validate_tin_tr
       IMPORTING
-        !locale      TYPE land1
         !tin_list    TYPE zotct_tt0003 OPTIONAL
         !tin         TYPE string OPTIONAL
         !type        TYPE char4
@@ -161,7 +157,6 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
       WHEN 'TR'.
         CALL METHOD validate_tin_tr
           EXPORTING
-            locale      = locale
             tin_list    = tin_list
             tin         = tin
             type        = type
@@ -187,9 +182,18 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
           lv_mod2        TYPE p,
           lv_dec10       TYPE c LENGTH 1,
           lv_dec11       TYPE c LENGTH 1,
-          lv_strlen      TYPE p.
+          lv_strlen      TYPE p,
+          lt_list        TYPE zotct_tt0003.
 
-    LOOP AT tin_list INTO ls_list.
+    lt_list[] = tin_list[].
+
+    IF lt_list IS INITIAL.
+      CLEAR ls_list.
+      ls_list-tin = tin.
+      APPEND ls_list TO lt_list.
+    ENDIF.
+
+    LOOP AT lt_list INTO ls_list.
       CLEAR ls_result_list.
 
       CLEAR lv_strlen.

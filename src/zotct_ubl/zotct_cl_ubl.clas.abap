@@ -57,11 +57,14 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
                    <split>    TYPE string,
                    <sproxdat> LIKE LINE OF me->mt_sproxdat.
 
-    DATA: lv_nodestr TYPE string,
-          lv_counter TYPE p,
-          lt_split   TYPE TABLE OF string,
-          lv_lines   TYPE p,
-          lv_nestcnt TYPE syindex.
+    DATA: lv_nodestr    TYPE string,
+          lv_counter    TYPE p,
+          lt_split      TYPE TABLE OF string,
+          lv_lines      TYPE p,
+          lv_nestcnt    TYPE syindex,
+          lt_collection TYPE TABLE OF string,
+          ls_collection TYPE string,
+          lt_return     TYPE TABLE OF string.
 
     CLEAR: lv_nodestr.
 
@@ -88,10 +91,6 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
 *** Generate inter-nodes
 
-    DATA: lt_collection TYPE TABLE OF string,
-          ls_collection TYPE string,
-          lt_return     TYPE TABLE OF string.
-
     FIELD-SYMBOLS: <return>     TYPE string,
                    <collection> TYPE string.
 
@@ -110,8 +109,6 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
     ENDLOOP.
 
     DELETE ADJACENT DUPLICATES FROM me->mt_nodemap COMPARING node.
-
-
 
     CLEAR: lv_counter.
 
@@ -187,7 +184,12 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
           parser         TYPE REF TO if_ixml_parser,
           gt_table       TYPE STANDARD TABLE OF ty_table,
           lv_name        TYPE string,
-          lv_value       TYPE string.
+          lv_value       TYPE string,
+          iterator       TYPE REF TO if_ixml_node_iterator,
+          node           TYPE REF TO if_ixml_node,
+          parent         TYPE REF TO if_ixml_node,
+          lt_parent      TYPE STANDARD TABLE OF string,
+          lv_parentname  TYPE string..
 
     FIELD-SYMBOLS: <table> TYPE ty_table.
 
@@ -204,17 +206,10 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
     parser->parse( ).
 
-    DATA: iterator      TYPE REF TO if_ixml_node_iterator,
-          node          TYPE REF TO if_ixml_node,
-          parent        TYPE REF TO if_ixml_node,
-
-          lt_parent     TYPE STANDARD TABLE OF string,
-          lv_parentname TYPE string.
-
     FIELD-SYMBOLS: <parent> TYPE string.
     iterator = document->create_iterator( ).
     node = iterator->get_next( ).
-    WHILE NOT node IS INITIAL.
+    WHILE node IS NOT INITIAL.
       node = iterator->get_next( ).
 
       IF node IS INITIAL.
@@ -304,12 +299,20 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
 
   METHOD nest.
-    DATA: lcl_ixml   TYPE REF TO if_ixml,
-          lv_counter TYPE p,
-          lv_times   TYPE p,
-          lv_aseqnr  TYPE p,
-          lv_anodnr  TYPE p,
-          lv_prefix  TYPE string.
+    TYPES: BEGIN OF ty_nodecoll,
+             flattab LIKE mt_flattab,
+           END OF ty_nodecoll.
+
+    DATA: lcl_ixml     TYPE REF TO if_ixml,
+          lv_counter   TYPE p,
+          lv_times     TYPE p,
+          lv_aseqnr    TYPE p,
+          lv_anodnr    TYPE p,
+          lv_prefix    TYPE string,
+          lv_seqnr     TYPE seqnr,
+          lv_seqnr_max TYPE string,
+          lt_nodecoll  TYPE TABLE OF ty_nodecoll,
+          gt_flattab_d TYPE TABLE OF zotct_s0001.
 
     FIELD-SYMBOLS: <ubl>      TYPE any,
                    <flattab>  TYPE zotct_s0001,
@@ -320,7 +323,7 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
 *** Map ABAP Name
     LOOP AT mt_flattab ASSIGNING <flattab>.
-      IF  <flattab>-table IS INITIAL.
+      IF <flattab>-table IS INITIAL.
         READ TABLE me->mt_tabl WITH KEY xml_name = <flattab>-xmlkey ASSIGNING <tabl>.
         IF sy-subrc EQ 0.
           <flattab>-abap_name = <tabl>-abap_name.
@@ -344,15 +347,6 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
       ENDLOOP.
     ENDLOOP.
 *** Create XML
-    TYPES: BEGIN OF ty_nodecoll,
-             flattab LIKE mt_flattab,
-           END OF ty_nodecoll.
-
-
-    DATA: lv_seqnr     TYPE seqnr,
-          lv_seqnr_max TYPE string,
-          lt_nodecoll  TYPE TABLE OF ty_nodecoll,
-          gt_flattab_d TYPE TABLE OF zotct_s0001.
 
     FIELD-SYMBOLS: <flattab_d> LIKE LINE OF gt_flattab_d,
                    <nodecoll>  LIKE LINE OF lt_nodecoll.
@@ -396,8 +390,7 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
       lv_prefix = me->get_prefix( xmlkey = <nodemap>-xmlkey ).
 
       <nodemap>-obj = me->mo_document->create_simple_element_ns( name = <nodemap>-xmlkey
-                                                                  parent = me->mo_document
-                                                                   ).
+                                                                  parent = me->mo_document ).
 
       LOOP AT me->mt_flattab ASSIGNING <flattab> WHERE xmlval IS NOT INITIAL
                                                      AND parent EQ <nodemap>-id.

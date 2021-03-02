@@ -41,7 +41,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     DATA: lcl_ref TYPE REF TO data.
 
     CREATE DATA: lcl_ref LIKE table.
-    ASSIGN: lcl_ref->* TO <restab>,
+    ASSIGN: lcl_ref->* TO <restab>, "#EC CI_SUBRC
             colname TO <colname>.
 
     IF sy-subrc IS NOT INITIAL.
@@ -71,7 +71,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     DATA: lcl_ref TYPE REF TO data.
 
     CREATE DATA: lcl_ref LIKE table.
-    ASSIGN: lcl_ref->* TO <restab>,
+    ASSIGN: lcl_ref->* TO <restab>, "#EC CI_SUBRC
             colname TO <colname>.
     IF sy-subrc IS NOT INITIAL.
       RETURN.
@@ -121,7 +121,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
         l_datadescr = lo_new_tab->get_table_line_type( ).
         l_structure ?= l_datadescr.
       CATCH cx_root.
-        EXIT.
+        RETURN.
     ENDTRY.
 
     l_comp_tab = l_structure->get_components( ).
@@ -160,6 +160,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
     LOOP AT table ASSIGNING <f_target_struct>.
       ASSIGN COMPONENT 'SEQNR' OF STRUCTURE <f_target_struct2> TO <f_field>.
+      CHECK sy-subrc IS INITIAL.
 
       MOVE-CORRESPONDING <f_target_struct> TO <f_target_struct2>.
 
@@ -207,6 +208,9 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     CREATE DATA: l_ref LIKE table.
 
     ASSIGN l_ref->* TO <f_target_tab>.
+    IF sy-subrc IS NOT INITIAL.
+      RETURN.
+    ENDIF.
 
 
     TRY.
@@ -214,7 +218,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
         l_datadescr = lo_new_tab->get_table_line_type( ).
         l_structure ?= l_datadescr.
       CATCH cx_root.
-        EXIT.
+        RETURN.
     ENDTRY.
     l_comp_tab = l_structure->get_components( ).
 
