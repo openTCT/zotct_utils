@@ -72,8 +72,10 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
 
   METHOD constructor.
-
-    FIELD-SYMBOLS: <t0001> LIKE LINE OF me->mt_t0001.
+    FIELD-SYMBOLS: <t0001> LIKE LINE OF me->mt_t0001,
+                   <sproxdat> LIKE LINE OF me->mt_sproxdat,
+                   <data>     TYPE zotct_s0006,
+                   <tadir_v>  LIKE LINE OF me->mt_tadir_v.
 
     DATA: lv_prefixp TYPE tabname,
           wf_ref     TYPE REF TO data.
@@ -106,10 +108,6 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
       WHERE prefix EQ <t0001>-prefix.
 
 *** Prepare structure and table type data
-    FIELD-SYMBOLS: <sproxdat> LIKE LINE OF me->mt_sproxdat,
-                   <data>     TYPE zotct_s0006,
-                   <tadir_v>  LIKE LINE OF me->mt_tadir_v.
-
     LOOP AT me->mt_sproxdat ASSIGNING <sproxdat>.
       CASE <sproxdat>-object1.
         WHEN 'FIEL'.
