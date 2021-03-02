@@ -322,7 +322,9 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
                    <tadir_v>   LIKE LINE OF me->mt_tadir_v,
                    <flattab_d> LIKE LINE OF gt_flattab_d,
                    <nodecoll>  LIKE LINE OF lt_nodecoll,
-                   <nodemap>   TYPE zotct_s0007.
+                   <nodemap>   TYPE zotct_s0007,
+                   <parent>  TYPE zotct_s0007,
+                   <aparent> TYPE zotct_s0001.
 
 *** Map ABAP Name
     LOOP AT mt_flattab ASSIGNING <flattab>.
@@ -401,9 +403,6 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
       EXIT.
     ENDLOOP.
 *  Create Children - from nodemap
-    FIELD-SYMBOLS: <parent>  TYPE zotct_s0007,
-                   <aparent> TYPE zotct_s0001.
-
     LOOP AT me->mt_nodemap ASSIGNING <nodemap>.
       IF <nodemap>-id EQ 1.
         CONTINUE.
