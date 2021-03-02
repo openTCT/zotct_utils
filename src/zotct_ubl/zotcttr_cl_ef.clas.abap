@@ -12,29 +12,29 @@ CLASS zotcttr_cl_ef DEFINITION
 
     METHODS get_xmlstr
         REDEFINITION .
-protected section.
+  PROTECTED SECTION.
 
-  data MC_XMLNS type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2' ##NO_TEXT.
-  data MC_CAC type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2' ##NO_TEXT.
-  data MC_XADES type STRING value 'http://uri.etsi.org/01903/v1.3.2#' ##NO_TEXT.
-  data MC_UDT type STRING value 'urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2' ##NO_TEXT.
-  data MC_CBC type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2' ##NO_TEXT.
-  data MC_CCTS type STRING value 'urn:un:unece:uncefact:documentation:2' ##NO_TEXT.
-  data MC_UBLTR type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:TurkishCustomizationExtensionComponents' ##NO_TEXT.
-  data MC_QDT type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2' ##NO_TEXT.
-  data MC_EXT type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2' ##NO_TEXT.
-  data MC_DS type STRING value 'http://www.w3.org/2000/09/xmldsig#' ##NO_TEXT.
-  data MC_XSI type STRING value 'http://www.w3.org/2001/XMLSchema-instance' ##NO_TEXT.
-  data MC_SCHEMALOCATION type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 UBL-Invoice-2.1.xsd' ##NO_TEXT.
-  data MC_NS8 type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2' ##NO_TEXT.
-  data MC_DOCNAME type STRING value 'Invoice' ##NO_TEXT.
+    DATA mc_xmlns TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2' ##NO_TEXT.
+    DATA mc_cac TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2' ##NO_TEXT.
+    DATA mc_xades TYPE string VALUE 'http://uri.etsi.org/01903/v1.3.2#' ##NO_TEXT.
+    DATA mc_udt TYPE string VALUE 'urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2' ##NO_TEXT.
+    DATA mc_cbc TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2' ##NO_TEXT.
+    DATA mc_ccts TYPE string VALUE 'urn:un:unece:uncefact:documentation:2' ##NO_TEXT.
+    DATA mc_ubltr TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:TurkishCustomizationExtensionComponents' ##NO_TEXT.
+    DATA mc_qdt TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2' ##NO_TEXT.
+    DATA mc_ext TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2' ##NO_TEXT.
+    DATA mc_ds TYPE string VALUE 'http://www.w3.org/2000/09/xmldsig#' ##NO_TEXT.
+    DATA mc_xsi TYPE string VALUE 'http://www.w3.org/2001/XMLSchema-instance' ##NO_TEXT.
+    DATA mc_schemalocation TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 UBL-Invoice-2.1.xsd' ##NO_TEXT.
+    DATA mc_ns8 TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2' ##NO_TEXT.
+    DATA mc_docname TYPE string VALUE 'Invoice' ##NO_TEXT.
 
-  methods CREATE_NODEMAP
-    redefinition .
-  methods GET_PREFIX
-    redefinition .
-  methods SET_NAMESPACES
-    redefinition .
+    METHODS create_nodemap
+        REDEFINITION .
+    METHODS get_prefix
+        REDEFINITION .
+    METHODS set_namespaces
+        REDEFINITION .
   PRIVATE SECTION.
 ENDCLASS.
 

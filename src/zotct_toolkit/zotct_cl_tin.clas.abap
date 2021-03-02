@@ -79,15 +79,15 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
 
   METHOD cre_dummy_tin_tr.
 
-    DATA: lv_ran_int      TYPE qfranint,
-          ls_tin          TYPE ty_tin,
-          lv_tckn_root    TYPE c LENGTH 9,
-          lv_even_sum     TYPE p,
-          lv_odd_sum      TYPE p,
-          lv_mod1         TYPE p,
-          lv_mod2         TYPE p,
-          lv_dec10        TYPE c LENGTH 1,
-          lv_dec11        TYPE c LENGTH 1.
+    DATA: lv_ran_int   TYPE qfranint,
+          ls_tin       TYPE ty_tin,
+          lv_tckn_root TYPE c LENGTH 9,
+          lv_even_sum  TYPE p,
+          lv_odd_sum   TYPE p,
+          lv_mod1      TYPE p,
+          lv_mod2      TYPE p,
+          lv_dec10     TYPE c LENGTH 1,
+          lv_dec11     TYPE c LENGTH 1.
 
     DO count TIMES.
 
@@ -177,17 +177,17 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
 
   METHOD validate_tin_tr.
 
-    DATA: ls_list         TYPE ty_tin,
-          ls_result_list  TYPE ty_result,
-          lv_tckn_root    TYPE c LENGTH 9,
-          lv_tckn         TYPE c LENGTH 11,
-          lv_even_sum     TYPE p,
-          lv_odd_sum      TYPE p,
-          lv_mod1         TYPE p,
-          lv_mod2         TYPE p,
-          lv_dec10        TYPE c LENGTH 1,
-          lv_dec11        TYPE c LENGTH 1,
-          lv_strlen       TYPE p.
+    DATA: ls_list        TYPE ty_tin,
+          ls_result_list TYPE ty_result,
+          lv_tckn_root   TYPE c LENGTH 9,
+          lv_tckn        TYPE c LENGTH 11,
+          lv_even_sum    TYPE p,
+          lv_odd_sum     TYPE p,
+          lv_mod1        TYPE p,
+          lv_mod2        TYPE p,
+          lv_dec10       TYPE c LENGTH 1,
+          lv_dec11       TYPE c LENGTH 1,
+          lv_strlen      TYPE p.
 
     LOOP AT tin_list INTO ls_list.
       CLEAR ls_result_list.
