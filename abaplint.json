@@ -176,10 +176,7 @@
       "sequential_blank": {
           "lines": 4
       },
-      "short_case": {
-          "length": 1,
-          "allow": []
-      },
+      "short_case": false,
       "space_before_colon": true,
       "space_before_dot": {
           "ignoreGlobalDefinition": true,
