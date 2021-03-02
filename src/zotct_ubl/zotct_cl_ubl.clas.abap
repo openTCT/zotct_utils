@@ -320,7 +320,8 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
                    <sproxdat>  LIKE LINE OF me->mt_sproxdat,
                    <tadir_v>   LIKE LINE OF me->mt_tadir_v,
                    <flattab_d> LIKE LINE OF gt_flattab_d,
-                   <nodecoll>  LIKE LINE OF lt_nodecoll.
+                   <nodecoll>  LIKE LINE OF lt_nodecoll,
+                   <nodemap>   TYPE zotct_s0007.
 
 *** Map ABAP Name
     LOOP AT mt_flattab ASSIGNING <flattab>.
@@ -377,8 +378,6 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
     me->mo_ixml     = cl_ixml=>create( ).
     me->mo_document = me->mo_ixml->create_document( ).
-
-    FIELD-SYMBOLS: <nodemap> TYPE zotct_s0007.
 
     DATA: lcl_parent TYPE REF TO if_ixml_element.
 *  Create Parent Node
