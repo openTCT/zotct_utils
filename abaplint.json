@@ -69,9 +69,7 @@
       },
       "exit_or_check": true,
       "exporting": true,
-      "functional_writing": {
-          "ignoreExceptions": true
-      },
+      "functional_writing": false,
       "global_class": true,
       "identical_form_names": true,
       "if_in_if": true,
@@ -191,7 +189,7 @@
       "superclass_final": true,
       "tabl_enhancement_category": false,
       "unreachable_code": true,
-      "use_new": true,
+      "use_new": false,
       "when_others_last": true,
       "whitespace_end": true,
       "ambiguous_statement": true,
@@ -255,7 +253,7 @@
       "prefer_inline": false,
       "reduce_string_templates": true,
       "sicf_consistency": true,
-      "sql_escape_host_variables": true,
+      "sql_escape_host_variables": false,
       "try_without_catch": true,
       "types_naming": {
           "pattern": "^T._.*$"
