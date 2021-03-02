@@ -406,9 +406,9 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
         lv_prefix = me->get_prefix( xmlkey = <flattab>-xmlkey ).
 
         <flattab>-obj = me->mo_document->create_simple_element_ns( name = <flattab>-xmlkey
-                                                                  value = <flattab>-xmlval
                                                                   parent = <nodemap>-obj
-                                                                  prefix = lv_prefix ).
+                                                                  prefix = lv_prefix
+                                                                  value = <flattab>-xmlval ).
       ENDLOOP.
       EXIT.
     ENDLOOP.
@@ -438,9 +438,9 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
           IF <flattab>-attrib IS INITIAL.
             <flattab>-obj = me->mo_document->create_simple_element_ns( name = <flattab>-xmlkey
-                                                                    value = <flattab>-xmlval
                                                                     parent = <nodemap>-obj
-                                                                    prefix = lv_prefix ).
+                                                                    prefix = lv_prefix
+                                                                    value = <flattab>-xmlval ).
           ENDIF.
         ENDLOOP.
       ENDIF.
@@ -503,7 +503,6 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
       SPLIT <ubltab>-xmlkey AT '->' INTO TABLE gt_split1.
       DESCRIBE TABLE gt_split1 LINES lv_splits.
-*      CLEAR me->gt_flattab[].
 
       LOOP AT gt_split1 ASSIGNING <split>.
         lv_cnt = lv_cnt + 1.

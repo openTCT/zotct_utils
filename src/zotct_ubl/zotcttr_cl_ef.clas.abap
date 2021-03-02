@@ -12,29 +12,29 @@ CLASS zotcttr_cl_ef DEFINITION
 
     METHODS get_xmlstr
         REDEFINITION .
-  PROTECTED SECTION.
+protected section.
 
-    DATA gc_xmlns TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2' ##NO_TEXT.
-    DATA gc_cac TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2' ##NO_TEXT.
-    DATA gc_xades TYPE string VALUE 'http://uri.etsi.org/01903/v1.3.2#' ##NO_TEXT.
-    DATA gc_udt TYPE string VALUE 'urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2' ##NO_TEXT.
-    DATA gc_cbc TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2' ##NO_TEXT.
-    DATA gc_ccts TYPE string VALUE 'urn:un:unece:uncefact:documentation:2' ##NO_TEXT.
-    DATA gc_ubltr TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:TurkishCustomizationExtensionComponents' ##NO_TEXT.
-    DATA gc_qdt TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2' ##NO_TEXT.
-    DATA gc_ext TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2' ##NO_TEXT.
-    DATA gc_ds TYPE string VALUE 'http://www.w3.org/2000/09/xmldsig#' ##NO_TEXT.
-    DATA gc_xsi TYPE string VALUE 'http://www.w3.org/2001/XMLSchema-instance' ##NO_TEXT.
-    DATA gc_schemalocation TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 UBL-Invoice-2.1.xsd' ##NO_TEXT.
-    DATA gc_ns8 TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2' ##NO_TEXT.
-    DATA gc_docname TYPE string VALUE 'Invoice' ##NO_TEXT.
+  data MC_XMLNS type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2' ##NO_TEXT.
+  data MC_CAC type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2' ##NO_TEXT.
+  data MC_XADES type STRING value 'http://uri.etsi.org/01903/v1.3.2#' ##NO_TEXT.
+  data MC_UDT type STRING value 'urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2' ##NO_TEXT.
+  data MC_CBC type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2' ##NO_TEXT.
+  data MC_CCTS type STRING value 'urn:un:unece:uncefact:documentation:2' ##NO_TEXT.
+  data MC_UBLTR type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:TurkishCustomizationExtensionComponents' ##NO_TEXT.
+  data MC_QDT type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2' ##NO_TEXT.
+  data MC_EXT type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2' ##NO_TEXT.
+  data MC_DS type STRING value 'http://www.w3.org/2000/09/xmldsig#' ##NO_TEXT.
+  data MC_XSI type STRING value 'http://www.w3.org/2001/XMLSchema-instance' ##NO_TEXT.
+  data MC_SCHEMALOCATION type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 UBL-Invoice-2.1.xsd' ##NO_TEXT.
+  data MC_NS8 type STRING value 'urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2' ##NO_TEXT.
+  data MC_DOCNAME type STRING value 'Invoice' ##NO_TEXT.
 
-    METHODS get_prefix
-        REDEFINITION .
-    METHODS set_namespaces
-        REDEFINITION .
-    METHODS create_nodemap
-        REDEFINITION .
+  methods CREATE_NODEMAP
+    redefinition .
+  methods GET_PREFIX
+    redefinition .
+  methods SET_NAMESPACES
+    redefinition .
   PRIVATE SECTION.
 ENDCLASS.
 
@@ -340,33 +340,33 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
     ENDIF.
 
     CASE prefix.
-      WHEN gc_xmlns.
+      WHEN mc_xmlns.
         prefix = 'xmlns'.
-      WHEN gc_cac.
+      WHEN mc_cac.
         prefix = 'cac'.
-      WHEN gc_xades.
+      WHEN mc_xades.
         prefix = 'xades'.
-      WHEN gc_udt.
+      WHEN mc_udt.
         prefix = 'udt'.
-      WHEN gc_cbc.
+      WHEN mc_cbc.
         prefix = 'cbc'.
-      WHEN gc_ccts.
+      WHEN mc_ccts.
         prefix = 'ccts'.
-      WHEN gc_ubltr.
+      WHEN mc_ubltr.
         prefix = 'ubltr'.
-      WHEN gc_qdt.
+      WHEN mc_qdt.
         prefix = 'qdt'.
-      WHEN gc_ext.
+      WHEN mc_ext.
         prefix = 'ext'.
-      WHEN gc_ds.
+      WHEN mc_ds.
         prefix = 'ds'.
-      WHEN gc_xsi.
+      WHEN mc_xsi.
         prefix = 'xsi'.
-      WHEN gc_schemalocation.
+      WHEN mc_schemalocation.
         prefix = 'schemaLocation'.
-      WHEN gc_ns8.
+      WHEN mc_ns8.
         prefix = 'ns8'.
-      WHEN gc_docname.
+      WHEN mc_docname.
         prefix = 'docname'.
     ENDCASE.
   ENDMETHOD.
@@ -412,20 +412,20 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
           lcl_element ?= lcl_node.
 
           lv_name = lcl_element->get_name( ).
-          IF lv_name EQ me->gc_docname.
-            lcl_element->set_attribute( name = 'xmlns' value = gc_xmlns ).
-            lcl_element->set_attribute( name = 'xmlns:cac' value = gc_cac ).
-            lcl_element->set_attribute( name = 'xmlns:cbc' value = gc_cbc ).
-            lcl_element->set_attribute( name = 'xmlns:ds' value = gc_ds ).
-            lcl_element->set_attribute( name = 'xmlns:ext' value = gc_ext ).
-            lcl_element->set_attribute( name = 'xmlns:ns8' value = gc_ns8 ).
-            lcl_element->set_attribute( name = 'xmlns:xades' value = gc_xades ).
-            lcl_element->set_attribute( name = 'xmlns:xsi' value = gc_xsi ).
-            lcl_element->set_attribute( name = 'xsi:schemaLocation' value = gc_schemalocation ).
-            lcl_element->set_attribute( name = 'xmlns:ccts' value = gc_ccts ).
-            lcl_element->set_attribute( name = 'xmlns:ubltr' value = gc_ubltr ).
-            lcl_element->set_attribute( name = 'xmlns:qdt' value = gc_qdt ).
-            lcl_element->set_attribute( name = 'xmlns:udt' value = gc_udt ).
+          IF lv_name EQ me->mc_docname.
+            lcl_element->set_attribute( name = 'xmlns' value = mc_xmlns ).
+            lcl_element->set_attribute( name = 'xmlns:cac' value = mc_cac ).
+            lcl_element->set_attribute( name = 'xmlns:cbc' value = mc_cbc ).
+            lcl_element->set_attribute( name = 'xmlns:ds' value = mc_ds ).
+            lcl_element->set_attribute( name = 'xmlns:ext' value = mc_ext ).
+            lcl_element->set_attribute( name = 'xmlns:ns8' value = mc_ns8 ).
+            lcl_element->set_attribute( name = 'xmlns:xades' value = mc_xades ).
+            lcl_element->set_attribute( name = 'xmlns:xsi' value = mc_xsi ).
+            lcl_element->set_attribute( name = 'xsi:schemaLocation' value = mc_schemalocation ).
+            lcl_element->set_attribute( name = 'xmlns:ccts' value = mc_ccts ).
+            lcl_element->set_attribute( name = 'xmlns:ubltr' value = mc_ubltr ).
+            lcl_element->set_attribute( name = 'xmlns:qdt' value = mc_qdt ).
+            lcl_element->set_attribute( name = 'xmlns:udt' value = mc_udt ).
 
             EXIT.
           ENDIF.
