@@ -189,7 +189,7 @@
       },
       "start_at_tab": true,
       "superclass_final": true,
-      "tabl_enhancement_category": true,
+      "tabl_enhancement_category": false,
       "unreachable_code": true,
       "use_new": true,
       "when_others_last": true,
