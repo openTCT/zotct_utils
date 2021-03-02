@@ -81,13 +81,13 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
 
     DATA: lv_ran_int      TYPE qfranint,
           ls_tin          TYPE ty_tin,
-          lv_tckn_root(9),
+          lv_tckn_root    TYPE c LENGTH 9,
           lv_even_sum     TYPE p,
           lv_odd_sum      TYPE p,
           lv_mod1         TYPE p,
           lv_mod2         TYPE p,
-          lv_dec10,
-          lv_dec11.
+          lv_dec10        TYPE c LENGTH 1,
+          lv_dec11        TYPE c LENGTH 1.
 
     DO count TIMES.
 
@@ -159,7 +159,7 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
   METHOD validate_tin.
     CASE locale.
       WHEN 'TR'.
-        CALL METHOD zotct_cl_tin=>validate_tin_tr
+        CALL METHOD validate_tin_tr
           EXPORTING
             locale      = locale
             tin_list    = tin_list
@@ -179,14 +179,14 @@ CLASS ZOTCT_CL_TIN IMPLEMENTATION.
 
     DATA: ls_list         TYPE ty_tin,
           ls_result_list  TYPE ty_result,
-          lv_tckn_root(9),
-          lv_tckn(11),
+          lv_tckn_root    TYPE c LENGTH 9,
+          lv_tckn         TYPE c LENGTH 11,
           lv_even_sum     TYPE p,
           lv_odd_sum      TYPE p,
           lv_mod1         TYPE p,
           lv_mod2         TYPE p,
-          lv_dec10,
-          lv_dec11,
+          lv_dec10        TYPE c LENGTH 1,
+          lv_dec11        TYPE c LENGTH 1,
           lv_strlen       TYPE p.
 
     LOOP AT tin_list INTO ls_list.
