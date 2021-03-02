@@ -52,10 +52,12 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
 
   METHOD create_nodemap.
-    FIELD-SYMBOLS: <nodemap>  LIKE LINE OF me->mt_nodemap,
-                   <flattab>  LIKE LINE OF me->mt_flattab,
-                   <split>    TYPE string,
-                   <sproxdat> LIKE LINE OF me->mt_sproxdat.
+    FIELD-SYMBOLS: <nodemap>    LIKE LINE OF me->mt_nodemap,
+                   <flattab>    LIKE LINE OF me->mt_flattab,
+                   <split>      TYPE string,
+                   <sproxdat>   LIKE LINE OF me->mt_sproxdat,
+                   <return>     TYPE string,
+                   <collection> TYPE string.
 
     DATA: lv_nodestr    TYPE string,
           lv_counter    TYPE p,
@@ -90,9 +92,6 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
     ENDLOOP.
 
 *** Generate inter-nodes
-
-    FIELD-SYMBOLS: <return>     TYPE string,
-                   <collection> TYPE string.
 
     LOOP AT me->mt_nodemap ASSIGNING <nodemap>.
       lt_return = me->generate_nodes( xmlkey = <nodemap>-node ).
@@ -189,9 +188,10 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
           node           TYPE REF TO if_ixml_node,
           parent         TYPE REF TO if_ixml_node,
           lt_parent      TYPE STANDARD TABLE OF string,
-          lv_parentname  TYPE string..
+          lv_parentname  TYPE string.
 
-    FIELD-SYMBOLS: <table> TYPE ty_table.
+    FIELD-SYMBOLS: <table>  TYPE ty_table,
+                   <parent> TYPE string.
 
     ixml = cl_ixml=>create( ).
     stream_factory = ixml->create_stream_factory( ).
@@ -206,7 +206,6 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
     parser->parse( ).
 
-    FIELD-SYMBOLS: <parent> TYPE string.
     iterator = document->create_iterator( ).
     node = iterator->get_next( ).
     WHILE node IS NOT INITIAL.
@@ -314,12 +313,14 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
           lt_nodecoll  TYPE TABLE OF ty_nodecoll,
           gt_flattab_d TYPE TABLE OF zotct_s0001.
 
-    FIELD-SYMBOLS: <ubl>      TYPE any,
-                   <flattab>  TYPE zotct_s0001,
-                   <tabl>     LIKE LINE OF me->mt_tabl,
-                   <ttyp>     LIKE LINE OF me->mt_ttyp,
-                   <sproxdat> LIKE LINE OF me->mt_sproxdat,
-                   <tadir_v>  LIKE LINE OF me->mt_tadir_v.
+    FIELD-SYMBOLS: <ubl>       TYPE any,
+                   <flattab>   TYPE zotct_s0001,
+                   <tabl>      LIKE LINE OF me->mt_tabl,
+                   <ttyp>      LIKE LINE OF me->mt_ttyp,
+                   <sproxdat>  LIKE LINE OF me->mt_sproxdat,
+                   <tadir_v>   LIKE LINE OF me->mt_tadir_v,
+                   <flattab_d> LIKE LINE OF gt_flattab_d,
+                   <nodecoll>  LIKE LINE OF lt_nodecoll.
 
 *** Map ABAP Name
     LOOP AT mt_flattab ASSIGNING <flattab>.
@@ -347,9 +348,6 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
       ENDLOOP.
     ENDLOOP.
 *** Create XML
-
-    FIELD-SYMBOLS: <flattab_d> LIKE LINE OF gt_flattab_d,
-                   <nodecoll>  LIKE LINE OF lt_nodecoll.
 
     CLEAR: lv_seqnr,
            lv_seqnr_max.

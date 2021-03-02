@@ -14,20 +14,48 @@ CLASS zotcttr_cl_ef DEFINITION
         REDEFINITION .
   PROTECTED SECTION.
 
-    DATA mc_xmlns TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2' ##NO_TEXT.
-    DATA mc_cac TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2' ##NO_TEXT.
-    DATA mc_xades TYPE string VALUE 'http://uri.etsi.org/01903/v1.3.2#' ##NO_TEXT.
-    DATA mc_udt TYPE string VALUE 'urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2' ##NO_TEXT.
-    DATA mc_cbc TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2' ##NO_TEXT.
-    DATA mc_ccts TYPE string VALUE 'urn:un:unece:uncefact:documentation:2' ##NO_TEXT.
-    DATA mc_ubltr TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:TurkishCustomizationExtensionComponents' ##NO_TEXT.
-    DATA mc_qdt TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2' ##NO_TEXT.
-    DATA mc_ext TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2' ##NO_TEXT.
-    DATA mc_ds TYPE string VALUE 'http://www.w3.org/2000/09/xmldsig#' ##NO_TEXT.
-    DATA mc_xsi TYPE string VALUE 'http://www.w3.org/2001/XMLSchema-instance' ##NO_TEXT.
-    DATA mc_schemalocation TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 UBL-Invoice-2.1.xsd' ##NO_TEXT.
-    DATA mc_ns8 TYPE string VALUE 'urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2' ##NO_TEXT.
-    DATA mc_docname TYPE string VALUE 'Invoice' ##NO_TEXT.
+    DATA mc_xmlns
+          TYPE string
+          VALUE 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2' ##NO_TEXT.
+    DATA mc_cac
+          TYPE string
+          VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2' ##NO_TEXT.
+    DATA mc_xades
+          TYPE string
+          VALUE 'http://uri.etsi.org/01903/v1.3.2#' ##NO_TEXT.
+    DATA mc_udt
+          TYPE string
+          VALUE 'urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2' ##NO_TEXT.
+    DATA mc_cbc
+          TYPE string
+          VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2' ##NO_TEXT.
+    DATA mc_ccts
+          TYPE string
+          VALUE 'urn:un:unece:uncefact:documentation:2' ##NO_TEXT.
+    DATA mc_ubltr
+          TYPE string
+          VALUE 'urn:oasis:names:specification:ubl:schema:xsd:TurkishCustomizationExtensionComponents' ##NO_TEXT.
+    DATA mc_qdt
+          TYPE string
+          VALUE 'urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2' ##NO_TEXT.
+    DATA mc_ext
+          TYPE string
+          VALUE 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2' ##NO_TEXT.
+    DATA mc_ds
+          TYPE string
+          VALUE 'http://www.w3.org/2000/09/xmldsig#' ##NO_TEXT.
+    DATA mc_xsi
+          TYPE string
+          VALUE 'http://www.w3.org/2001/XMLSchema-instance' ##NO_TEXT.
+    DATA mc_schemalocation
+          TYPE string
+          VALUE 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 UBL-Invoice-2.1.xsd' ##NO_TEXT.
+    DATA mc_ns8
+          TYPE string
+          VALUE 'urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2' ##NO_TEXT.
+    DATA mc_docname
+          TYPE string
+          VALUE 'Invoice' ##NO_TEXT.
 
     METHODS create_nodemap
         REDEFINITION .
@@ -47,7 +75,8 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
     FIELD-SYMBOLS: <t0001> LIKE LINE OF me->mt_t0001.
 
-    DATA: lv_prefixp TYPE tabname.
+    DATA: lv_prefixp TYPE tabname,
+          wf_ref     TYPE REF TO data.
 
     super->constructor( ).
 
@@ -77,10 +106,6 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
       WHERE prefix EQ <t0001>-prefix.
 
 *** Prepare structure and table type data
-
-    DATA: data_type TYPE REF TO cl_abap_elemdescr,
-          wf_ref    TYPE REF TO data.
-
     FIELD-SYMBOLS: <sproxdat> LIKE LINE OF me->mt_sproxdat,
                    <data>     TYPE zotct_s0006,
                    <tadir_v>  LIKE LINE OF me->mt_tadir_v.
@@ -148,8 +173,6 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
               <data>-xml_name = <tadir_v>-ifr_name.
             ENDIF.
             <data>-xml_name = <sproxdat>-ifr_name.
-          ELSE.
-
           ENDIF.
 
           <data>-r3_name = <sproxdat>-obj_name1.
@@ -163,10 +186,10 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
 
   METHOD create_nodemap.
-    CALL METHOD super->create_nodemap.
-***  Rearrange nodemap order for Turkey e-Fatura
     FIELD-SYMBOLS: <nodemap> LIKE LINE OF me->mt_nodemap.
 
+    CALL METHOD super->create_nodemap.
+***  Rearrange nodemap order for Turkey e-Fatura
     LOOP AT me->mt_nodemap ASSIGNING <nodemap>.
       CASE <nodemap>-node.
         WHEN 'Invoice->UBLExtensions'.
@@ -373,14 +396,10 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
 
   METHOD get_xmlstr.
-
-    me->set_namespaces( ).
-
     DATA: lv_encoding TYPE string.
 
+    me->set_namespaces( ).
     CLEAR: lv_encoding.
-
-
     CONCATENATE '<?xml version="1.0" encoding="utf-8"?>' cl_abap_char_utilities=>newline INTO lv_encoding.
 
     REPLACE ALL OCCURRENCES OF '<?xml version="1.0" encoding="utf-16"?>' IN me->mv_xmlstr WITH lv_encoding.
@@ -390,16 +409,11 @@ CLASS ZOTCTTR_CL_EF IMPLEMENTATION.
 
 
   METHOD set_namespaces.
-*CALL METHOD SUPER->SET_NAMESPACES
-*    .
-
 *** set namespaces redefinition
     DATA: lcl_iterator TYPE REF TO if_ixml_node_iterator,
           lv_name      TYPE string,
           lcl_element  TYPE REF TO if_ixml_element,
-          lcl_node     TYPE REF TO if_ixml_node,
-          lcl_attr     TYPE REF TO if_ixml_attribute.
-
+          lcl_node     TYPE REF TO if_ixml_node.
 
     lcl_iterator = me->mo_document->create_iterator( ).
     lcl_node = lcl_iterator->get_next( ).
