@@ -311,7 +311,8 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
           lv_seqnr     TYPE seqnr,
           lv_seqnr_max TYPE string,
           lt_nodecoll  TYPE TABLE OF ty_nodecoll,
-          gt_flattab_d TYPE TABLE OF zotct_s0001.
+          gt_flattab_d TYPE TABLE OF zotct_s0001,
+          lcl_parent TYPE REF TO if_ixml_element.
 
     FIELD-SYMBOLS: <ubl>       TYPE any,
                    <flattab>   TYPE zotct_s0001,
@@ -349,7 +350,6 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
       ENDLOOP.
     ENDLOOP.
 *** Create XML
-
     CLEAR: lv_seqnr,
            lv_seqnr_max.
 
@@ -379,10 +379,8 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
     me->mo_ixml     = cl_ixml=>create( ).
     me->mo_document = me->mo_ixml->create_document( ).
 
-    DATA: lcl_parent TYPE REF TO if_ixml_element.
 *  Create Parent Node
     LOOP AT me->mt_nodemap ASSIGNING <nodemap>.
-
       CLEAR: lv_prefix.
       lv_prefix = me->get_prefix( xmlkey = <nodemap>-xmlkey ).
 
