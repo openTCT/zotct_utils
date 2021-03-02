@@ -134,7 +134,7 @@
           "allowReadOnly": true
       },
       "object_naming": {
-          "clas": "^ZOTCT_C(L|X)\\_",
+          "clas": "^ZOTCT*_C(L|X)\\_",
           "intf": "^ZOTCT_IF\\_",
           "prog": "^ZOTCT",
           "fugr": "^ZOTCT",
