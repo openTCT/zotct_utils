@@ -264,9 +264,7 @@
       "unused_variables": true,
       "begin_single_include": true,
       "check_subrc": true,
-      "cyclomatic_complexity":{
-          "max": 6
-      },
+      "cyclomatic_complexity": false,
       "forbidden_pseudo_and_pragma": {
           "ignoreGlobalClassDefinition": true,
           "ignoreGlobalInterface": true,
