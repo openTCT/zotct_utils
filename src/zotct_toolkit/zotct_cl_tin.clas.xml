@@ -11,20 +11,6 @@
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>
    </VSEOCLASS>
-   <DESCRIPTIONS>
-    <SEOCOMPOTX>
-     <CLSNAME>ZOTCT_CL_TIN</CLSNAME>
-     <CMPNAME>MT_RESULT</CMPNAME>
-     <LANGU>E</LANGU>
-     <DESCRIPT>openTCT TIN validation list</DESCRIPT>
-    </SEOCOMPOTX>
-    <SEOCOMPOTX>
-     <CLSNAME>ZOTCT_CL_TIN</CLSNAME>
-     <CMPNAME>MT_TIN</CMPNAME>
-     <LANGU>E</LANGU>
-     <DESCRIPT>openTCT TIN list table type</DESCRIPT>
-    </SEOCOMPOTX>
-   </DESCRIPTIONS>
   </asx:values>
  </asx:abap>
 </abapGit>
