@@ -27,7 +27,6 @@ CLASS zotct_cl_ubl DEFINITION
     DATA mv_xmlstr TYPE stringval .
     DATA mt_flattab TYPE zotct_tt0001 .
     DATA mo_document TYPE REF TO if_ixml_document .
-    DATA mo_root TYPE REF TO if_ixml_element .
     DATA mo_ixml TYPE REF TO if_ixml .
 
     METHODS set_namespaces .
@@ -302,29 +301,23 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
              flattab LIKE mt_flattab,
            END OF ty_nodecoll.
 
-    DATA: lcl_ixml     TYPE REF TO if_ixml,
-          lv_counter   TYPE p,
-          lv_times     TYPE p,
-          lv_aseqnr    TYPE p,
+    DATA: lv_aseqnr    TYPE p,
           lv_anodnr    TYPE p,
           lv_prefix    TYPE string,
           lv_seqnr     TYPE seqnr,
           lv_seqnr_max TYPE string,
           lt_nodecoll  TYPE TABLE OF ty_nodecoll,
-          gt_flattab_d TYPE TABLE OF zotct_s0001,
-          lcl_parent TYPE REF TO if_ixml_element.
+          gt_flattab_d TYPE TABLE OF zotct_s0001.
 
-    FIELD-SYMBOLS: <ubl>       TYPE any,
-                   <flattab>   TYPE zotct_s0001,
+    FIELD-SYMBOLS: <flattab>   TYPE zotct_s0001,
                    <tabl>      LIKE LINE OF me->mt_tabl,
                    <ttyp>      LIKE LINE OF me->mt_ttyp,
                    <sproxdat>  LIKE LINE OF me->mt_sproxdat,
-                   <tadir_v>   LIKE LINE OF me->mt_tadir_v,
                    <flattab_d> LIKE LINE OF gt_flattab_d,
                    <nodecoll>  LIKE LINE OF lt_nodecoll,
                    <nodemap>   TYPE zotct_s0007,
-                   <parent>  TYPE zotct_s0007,
-                   <aparent> TYPE zotct_s0001.
+                   <parent>    TYPE zotct_s0007,
+                   <aparent>   TYPE zotct_s0001.
 
 *** Map ABAP Name
     LOOP AT mt_flattab ASSIGNING <flattab>.
