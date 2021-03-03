@@ -286,7 +286,12 @@ CLASS ZOTCT_CL_UBL IMPLEMENTATION.
 
 
   METHOD get_prefix.
-
+*      just added for abaplint checks
+*      Variable "prefix" not used
+*      Variable "xmlkey" not used
+    IF xmlkey IS INITIAL.
+      prefix = ''.
+    ENDIF.
   ENDMETHOD.
 
 
