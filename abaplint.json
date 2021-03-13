@@ -214,9 +214,7 @@
       "abapdoc": false,
       "release_idoc": true,
       "prefer_returning_to_exporting": true,
-      "keep_single_parameter_on_one_line": {
-          "length": 120
-      },
+      "keep_single_parameter_on_one_line": false,
       "allowed_object_naming": true,
       "chain_mainly_declarations": false,
       "fully_type_constants": true,
