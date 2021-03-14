@@ -15,6 +15,7 @@ PARAMETERS: p_upload TYPE rlgrap-filename.
 TYPES: BEGIN OF ty_filelist,
          filename TYPE string,
          content  TYPE string,
+         nested TYPE string,
        END OF ty_filelist.
 
 DATA: gt_filelist TYPE TABLE OF ty_filelist,
@@ -138,6 +139,29 @@ FORM set_data.
 
 
 ***  todo: run the test
+
+  DATA : lc_ublfactory TYPE REF TO zotct_cl_ubl_f,
+         lc_ef         TYPE REF TO zotcttr_cl_ef,
+         gt_ubltab     TYPE zotct_tt0002.
+
+  CREATE OBJECT lc_ublfactory
+    EXPORTING
+      locale  = 'TR'
+      product = 'EF'.
+
+  lc_ef ?= lc_ublfactory->get_ubl( ) .
+
+  LOOP AT gt_filelist INTO gs_filelist.
+    lc_ef->set_xmlstr( xmlstr = gs_filelist-content ).
+
+    lc_ef->flatten( ).
+    lc_ef->nest( ).
+
+  ENDLOOP.
+
+
+
+
 ENDFORM.
 *&---------------------------------------------------------------------*
 *& Form DISPLAY_DATA
