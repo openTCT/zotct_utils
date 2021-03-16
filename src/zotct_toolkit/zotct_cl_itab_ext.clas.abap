@@ -14,13 +14,13 @@ CLASS zotct_cl_itab_ext DEFINITION
     CLASS-METHODS max
       IMPORTING
         !colname   TYPE string
-        !table     TYPE STANDARD TABLE
+        !table     TYPE ANY TABLE
       RETURNING
         VALUE(val) TYPE string .
     CLASS-METHODS min
       IMPORTING
         !colname   TYPE string
-        !table     TYPE STANDARD TABLE
+        !table     TYPE ANY TABLE
       RETURNING
         VALUE(val) TYPE string .
   PROTECTED SECTION.
@@ -33,61 +33,156 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
 
 
   METHOD max.
-    FIELD-SYMBOLS: <colname> TYPE string,
-                   <value>   TYPE any,
-                   <restab>  TYPE ANY TABLE,
-                   <res>     TYPE any.
+    FIELD-SYMBOLS: <colname>         TYPE string,
+                   <value>           TYPE any,
+                   <restab_standatd> TYPE STANDARD TABLE,
+                   <restab_index>    TYPE SORTED TABLE,
+                   <restab_hashed>   TYPE HASHED TABLE,
+                   <res>             TYPE any.
 
     DATA: lcl_ref TYPE REF TO data.
+    DATA: knd TYPE c LENGTH 1.
 
+    DESCRIBE TABLE table KIND knd.
     CREATE DATA: lcl_ref LIKE table.
-    ASSIGN: lcl_ref->* TO <restab>, "#EC CI_SUBRC
-            colname TO <colname>.
+    ASSIGN colname TO <colname>.
 
-    IF sy-subrc IS NOT INITIAL.
-      RETURN.
-    ENDIF.
+    CASE knd.
+      WHEN sydes_kind-standard.
 
-    <restab> = table.
+        ASSIGN: lcl_ref->* TO <restab_standatd>.
+        IF <restab_standatd> IS NOT ASSIGNED.
+          RETURN.
+        ENDIF.
 
-    SORT <restab> BY (<colname>) DESCENDING.
+        <restab_standatd> = table.
 
-    LOOP AT <restab> ASSIGNING <res>.
-      ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
-      IF <value> IS ASSIGNED.
-        val = <value>.
-      ENDIF.
-      EXIT.
-    ENDLOOP.
+        SORT <restab_standatd> BY (<colname>) DESCENDING.
+
+        LOOP AT <restab_standatd> ASSIGNING <res>.
+          ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
+          IF <value> IS ASSIGNED.
+            val = <value>.
+          ENDIF.
+          EXIT.
+        ENDLOOP.
+
+      WHEN sydes_kind-sorted.
+
+        ASSIGN: lcl_ref->* TO <restab_index>.
+        IF <restab_index> IS NOT ASSIGNED.
+          RETURN.
+        ENDIF.
+
+        <restab_index> = table.
+
+        LOOP AT <restab_index> ASSIGNING <res>.
+          UNASSIGN <value>.
+          ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
+          IF <value> IS ASSIGNED.
+            IF <value> > val.
+              val = <value>.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+
+      WHEN sydes_kind-hashed.
+
+        ASSIGN: lcl_ref->* TO <restab_hashed>.
+        IF <restab_hashed> IS NOT ASSIGNED.
+          RETURN.
+        ENDIF.
+
+        <restab_hashed> = table.
+
+        LOOP AT <restab_hashed> ASSIGNING <res>.
+          UNASSIGN <value>.
+          ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
+          IF <value> IS ASSIGNED.
+            IF <value> > val.
+              val = <value>.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+    ENDCASE.
+
   ENDMETHOD.
 
 
   METHOD min.
-    FIELD-SYMBOLS: <colname> TYPE string,
-                   <value>   TYPE any,
-                   <restab>  TYPE ANY TABLE,
-                   <res>     TYPE any.
+    FIELD-SYMBOLS: <colname>         TYPE string,
+                   <value>           TYPE any,
+                   <restab_standatd> TYPE STANDARD TABLE,
+                   <restab_index>    TYPE SORTED TABLE,
+                   <restab_hashed>   TYPE HASHED TABLE,
+                   <res>             TYPE any.
 
     DATA: lcl_ref TYPE REF TO data.
+    DATA: knd TYPE c LENGTH 1.
 
+    DESCRIBE TABLE table KIND knd.
     CREATE DATA: lcl_ref LIKE table.
-    ASSIGN: lcl_ref->* TO <restab>, "#EC CI_SUBRC
-            colname TO <colname>.
-    IF sy-subrc IS NOT INITIAL.
-      RETURN.
-    ENDIF.
+    ASSIGN colname TO <colname>.
 
-    <restab> = table.
+    CASE knd.
+      WHEN sydes_kind-standard.
 
-    SORT <restab> BY (<colname>) ASCENDING.
+        ASSIGN: lcl_ref->* TO <restab_standatd>.
+        IF <restab_standatd> IS NOT ASSIGNED.
+          RETURN.
+        ENDIF.
 
-    LOOP AT <restab> ASSIGNING <res>.
-      ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
-      IF <value> IS ASSIGNED.
-        val = <value>.
-      ENDIF.
-      EXIT.
-    ENDLOOP.
+        <restab_standatd> = table.
+
+        SORT <restab_standatd> BY (<colname>) ASCENDING.
+
+        LOOP AT <restab_standatd> ASSIGNING <res>.
+          ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
+          IF <value> IS ASSIGNED.
+            val = <value>.
+          ENDIF.
+          EXIT.
+        ENDLOOP.
+
+      WHEN sydes_kind-sorted.
+
+        ASSIGN: lcl_ref->* TO <restab_index>.
+        IF <restab_index> IS NOT ASSIGNED.
+          RETURN.
+        ENDIF.
+
+        <restab_index> = table.
+
+        LOOP AT <restab_index> ASSIGNING <res>.
+          UNASSIGN <value>.
+          ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
+          IF <value> IS ASSIGNED.
+            IF <value> < val OR val IS INITIAL.
+              val = <value>.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+
+      WHEN sydes_kind-hashed.
+
+        ASSIGN: lcl_ref->* TO <restab_hashed>.
+        IF <restab_hashed> IS NOT ASSIGNED.
+          RETURN.
+        ENDIF.
+
+        <restab_hashed> = table.
+
+        LOOP AT <restab_hashed> ASSIGNING <res>.
+          UNASSIGN <value>.
+          ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
+          IF <value> IS ASSIGNED.
+            IF <value> < val OR val IS INITIAL.
+              val = <value>.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+    ENDCASE.
+
   ENDMETHOD.
 
 
