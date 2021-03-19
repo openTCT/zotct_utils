@@ -11,20 +11,6 @@
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>
    </VSEOCLASS>
-   <DESCRIPTIONS>
-    <SEOCOMPOTX>
-     <CLSNAME>ZOTCT_CL_ITAB_EXT</CLSNAME>
-     <CMPNAME>MAX</CMPNAME>
-     <LANGU>E</LANGU>
-     <DESCRIPT>Returns maximum value of column</DESCRIPT>
-    </SEOCOMPOTX>
-    <SEOCOMPOTX>
-     <CLSNAME>ZOTCT_CL_ITAB_EXT</CLSNAME>
-     <CMPNAME>MIN</CMPNAME>
-     <LANGU>E</LANGU>
-     <DESCRIPT>Returns minimum value of column</DESCRIPT>
-    </SEOCOMPOTX>
-   </DESCRIPTIONS>
   </asx:values>
  </asx:abap>
 </abapGit>
