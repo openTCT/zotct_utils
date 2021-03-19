@@ -1,44 +1,45 @@
-class ZOTCT_CL_UBL definition
-  public
-  create public .
+CLASS zotct_cl_ubl DEFINITION
+  PUBLIC
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  methods NEST .
-  methods SET_NODE
-    importing
-      !UBLTAB type ZOTCT_TT0002 .
-  methods GET_NODE
-    returning
-      value(UBLTAB) type ZOTCT_TT0002 .
-  methods GET_XMLSTR
-    returning
-      value(XMLSTR) type STRINGVAL .
-  methods SET_XMLSTR
-    importing
-      !XMLSTR type STRINGVAL .
-  methods FLATTEN .
-protected section.
+    METHODS constructor .
+    METHODS nest .
+    METHODS set_node
+      IMPORTING
+        !ubltab TYPE zotct_tt0002 .
+    METHODS get_node
+      RETURNING
+        VALUE(ubltab) TYPE zotct_tt0002 .
+    METHODS get_xmlstr
+      RETURNING
+        VALUE(xmlstr) TYPE stringval .
+    METHODS set_xmlstr
+      IMPORTING
+        !xmlstr TYPE stringval .
+    METHODS flatten .
+  PROTECTED SECTION.
 
-  data MT_T0001 type ZOTCT_TT0005 .
-  data MT_SPROXDAT type PRX_T_SPROXDAT .
-  data MT_TADIR_V type ZOTCT_TT0006 .
-  data MT_TTYP type ZOTCT_TT0007 .
-  data MT_TABL type ZOTCT_TT0007 .
-  data MT_NODEMAP type ZOTCT_TT0008 .
-  data MV_XMLSTR type STRINGVAL .
-  data MT_FLATTAB type ZOTCT_TT0001 .
-  data MT_FLATTEN type ZOTCT_TT0010 .
-  data MO_DOCUMENT type ref to IF_IXML_DOCUMENT .
-  data MO_IXML type ref to IF_IXML .
+    DATA mt_t0001 TYPE zotct_tt0005 .
+    DATA mt_sproxdat TYPE prx_t_sproxdat .
+    DATA mt_tadir_v TYPE zotct_tt0006 .
+    DATA mt_ttyp TYPE zotct_tt0007 .
+    DATA mt_tabl TYPE zotct_tt0007 .
+    DATA mt_nodemap TYPE zotct_tt0008 .
+    DATA mv_xmlstr TYPE stringval .
+    DATA mt_flattab TYPE zotct_tt0001 .
+    DATA mt_flatten TYPE zotct_tt0010 .
+    DATA mo_document TYPE REF TO if_ixml_document .
+    DATA mo_ixml TYPE REF TO if_ixml .
 
-  methods SET_NAMESPACES .
-  methods CREATE_NODEMAP .
-  methods GET_PREFIX
-    importing
-      !XMLKEY type STRING
-    returning
-      value(PREFIX) type STRING .
+    METHODS set_namespaces .
+    METHODS create_nodemap .
+    METHODS get_prefix
+      IMPORTING
+        !xmlkey       TYPE string
+      RETURNING
+        VALUE(prefix) TYPE string .
   PRIVATE SECTION.
 
     METHODS generate_nodes
@@ -51,6 +52,22 @@ ENDCLASS.
 
 
 CLASS ZOTCT_CL_UBL IMPLEMENTATION.
+
+
+  METHOD constructor.
+*** Clear attributes
+    CLEAR: mt_t0001,
+           mt_sproxdat,
+           mt_tadir_v,
+           mt_ttyp,
+           mt_tabl,
+           mt_nodemap,
+           mv_xmlstr,
+           mt_flattab,
+           mt_flatten,
+           mo_document,
+           mo_ixml.
+  ENDMETHOD.
 
 
   METHOD create_nodemap.
