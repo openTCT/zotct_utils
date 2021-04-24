@@ -1,28 +1,30 @@
-CLASS zotct_cl_itab_ext DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+class ZOTCT_CL_ITAB_EXT definition
+  public
+  final
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
-    CLASS-METHODS shuffle
-      CHANGING
-        !table TYPE STANDARD TABLE .
-    CLASS-METHODS reverse
-      CHANGING
-        !table TYPE STANDARD TABLE .
-    CLASS-METHODS max
-      IMPORTING
-        !colname   TYPE string
-        !table     TYPE ANY TABLE
-      RETURNING
-        VALUE(val) TYPE string .
-    CLASS-METHODS min
-      IMPORTING
-        !colname   TYPE string
-        !table     TYPE ANY TABLE
-      RETURNING
-        VALUE(val) TYPE string .
+  class-methods SHUFFLE
+    changing
+      !TABLE type STANDARD TABLE .
+  class-methods REVERSE
+    changing
+      !TABLE type STANDARD TABLE .
+  class-methods MAX
+    importing
+      !COLNAME type STRING
+      !TABLE type ANY TABLE
+    returning
+      value(VAL) type STRING
+    raising
+      ZCX_OTCT .
+  class-methods MIN
+    importing
+      !COLNAME type STRING
+      !TABLE type ANY TABLE
+    returning
+      value(VAL) type STRING .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
@@ -35,13 +37,20 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
   METHOD max.
     FIELD-SYMBOLS: <colname>         TYPE string,
                    <value>           TYPE any,
-                   <restab_standatd> TYPE STANDARD TABLE,
+                   <restab_standard> TYPE STANDARD TABLE,
                    <restab_index>    TYPE SORTED TABLE,
                    <restab_hashed>   TYPE HASHED TABLE,
                    <res>             TYPE any.
 
     DATA: lcl_ref TYPE REF TO data.
     DATA: knd TYPE c LENGTH 1.
+
+    IF table IS INITIAL OR
+       colname IS INITIAL.
+      RAISE EXCEPTION TYPE zcx_otct
+        EXPORTING
+          textid = zcx_otct=>input_initial.
+    ENDIF.
 
     DESCRIBE TABLE table KIND knd.
     CREATE DATA: lcl_ref LIKE table.
@@ -50,16 +59,16 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     CASE knd.
       WHEN sydes_kind-standard.
 
-        ASSIGN: lcl_ref->* TO <restab_standatd>.
-        IF <restab_standatd> IS NOT ASSIGNED.
+        ASSIGN: lcl_ref->* TO <restab_standard>.
+        IF <restab_standard> IS NOT ASSIGNED.
           RETURN.
         ENDIF.
 
-        <restab_standatd> = table.
+        <restab_standard> = table.
 
-        SORT <restab_standatd> BY (<colname>) DESCENDING.
+        SORT <restab_standard> BY (<colname>) DESCENDING.
 
-        LOOP AT <restab_standatd> ASSIGNING <res>.
+        LOOP AT <restab_standard> ASSIGNING <res>.
           ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
           IF <value> IS ASSIGNED.
             val = <value>.
@@ -112,7 +121,7 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
   METHOD min.
     FIELD-SYMBOLS: <colname>         TYPE string,
                    <value>           TYPE any,
-                   <restab_standatd> TYPE STANDARD TABLE,
+                   <restab_standard> TYPE STANDARD TABLE,
                    <restab_index>    TYPE SORTED TABLE,
                    <restab_hashed>   TYPE HASHED TABLE,
                    <res>             TYPE any.
@@ -124,19 +133,26 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
     CREATE DATA: lcl_ref LIKE table.
     ASSIGN colname TO <colname>.
 
+    IF table IS INITIAL OR
+       colname IS INITIAL.
+      RAISE EXCEPTION TYPE zcx_otct
+        EXPORTING
+          textid = zcx_otct=>input_initial.
+    ENDIF.
+
     CASE knd.
       WHEN sydes_kind-standard.
 
-        ASSIGN: lcl_ref->* TO <restab_standatd>.
-        IF <restab_standatd> IS NOT ASSIGNED.
+        ASSIGN: lcl_ref->* TO <restab_standard>.
+        IF <restab_standard> IS NOT ASSIGNED.
           RETURN.
         ENDIF.
 
-        <restab_standatd> = table.
+        <restab_standard> = table.
 
-        SORT <restab_standatd> BY (<colname>) ASCENDING.
+        SORT <restab_standard> BY (<colname>) ASCENDING.
 
-        LOOP AT <restab_standatd> ASSIGNING <res>.
+        LOOP AT <restab_standard> ASSIGNING <res>.
           ASSIGN COMPONENT <colname> OF STRUCTURE <res> TO <value>.
           IF <value> IS ASSIGNED.
             val = <value>.
@@ -203,6 +219,12 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
                    <f_target_struct>  TYPE any,
                    <f_target_struct2> TYPE any,
                    <f_field>          TYPE any.
+
+    IF table IS INITIAL.
+      RAISE EXCEPTION TYPE zcx_otct
+        EXPORTING
+          textid = zcx_otct=>input_initial.
+    ENDIF.
 
     CREATE DATA: l_ref LIKE table.
 
@@ -299,6 +321,12 @@ CLASS ZOTCT_CL_ITAB_EXT IMPLEMENTATION.
                    <f_target_struct>  TYPE any,
                    <f_target_struct2> TYPE any,
                    <f_field>          TYPE any.
+
+    IF table IS INITIAL.
+      RAISE EXCEPTION TYPE zcx_otct
+        EXPORTING
+          textid = zcx_otct=>input_initial.
+    ENDIF.
 
     CREATE DATA: l_ref LIKE table.
 

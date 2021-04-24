@@ -1,37 +1,39 @@
-CLASS zotct_cl_tin DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+class ZOTCT_CL_TIN definition
+  public
+  final
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
-    TYPES:
-      BEGIN OF ty_tin,
+  types:
+    BEGIN OF ty_tin,
         tin TYPE string,
       END OF ty_tin .
-    TYPES:
-      BEGIN OF ty_result,
+  types:
+    BEGIN OF ty_result,
         tin   TYPE string,
         valid TYPE abap_bool,
       END OF ty_result .
 
-    CLASS-METHODS create_dummy_tin
-      IMPORTING
-        !locale   TYPE land1
-        !count    TYPE sytabix OPTIONAL
-        !type     TYPE char4 DEFAULT 'TCKN'
-      EXPORTING
-        !tin_list TYPE zotct_tt0003
-        !tin      TYPE string .
-    CLASS-METHODS validate_tin
-      IMPORTING
-        !locale      TYPE land1
-        !tin_list    TYPE zotct_tt0003 OPTIONAL
-        !tin         TYPE string OPTIONAL
-        !type        TYPE char4 DEFAULT 'TCKN'
-      EXPORTING
-        !result_list TYPE zotct_tt0004
-        !valid       TYPE abap_bool .
+  class-methods CREATE_DUMMY_TIN
+    importing
+      !LOCALE type LAND1
+      !COUNT type SYTABIX optional
+      !TYPE type CHAR4 default 'TCKN'
+    exporting
+      !TIN_LIST type ZOTCT_TT0003
+      !TIN type STRING
+    raising
+      ZCX_OTCT .
+  class-methods VALIDATE_TIN
+    importing
+      !LOCALE type LAND1
+      !TIN_LIST type ZOTCT_TT0003 optional
+      !TIN type STRING optional
+      !TYPE type CHAR4 default 'TCKN'
+    exporting
+      !RESULT_LIST type ZOTCT_TT0004
+      !VALID type ABAP_BOOL .
   PROTECTED SECTION.
   PRIVATE SECTION.
 
