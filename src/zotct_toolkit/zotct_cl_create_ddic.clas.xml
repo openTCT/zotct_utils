@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZOTCT_CL_CREATE_DDIC</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>openTCT Bulk Creation of DDIC objects</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>CHECK_REPETITIVE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Check if there are any objects present with same name(s)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>CREATE_DOMA</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Create and activate domains</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>CREATE_DTEL</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Create and activate data elements</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>CREATE_STRU</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Create and activate structures</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>CREATE_TABL</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Create and activate tables</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>CREATE_TTYP</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Create and activate table types</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GT_ERROR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>DDIC Creation Repetitive List</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GT_REPETITIVE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>DDIC Creation Repetitive List</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>INITIALIZE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Start the process</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>INITIALIZE</CMPNAME>
+     <SCONAME>ET_ERROR</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>DDIC Creation Repetitive List</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>INITIALIZE</CMPNAME>
+     <SCONAME>IT_OBJLIST</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>DDIC Creation Interface List</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SET_DOMA</CMPNAME>
+     <SCONAME>IS_OBJLIST</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>DDIC Creation Interface List</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SET_DTEL</CMPNAME>
+     <SCONAME>IS_OBJLIST</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>DDIC Creation Interface List</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SET_STRU</CMPNAME>
+     <SCONAME>IS_OBJLIST</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>DDIC Creation Interface List</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SET_TABL</CMPNAME>
+     <SCONAME>IS_OBJLIST</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>DDIC Creation Interface List</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SET_TTYP</CMPNAME>
+     <SCONAME>IS_OBJLIST</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>DDIC Creation Interface List</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>
